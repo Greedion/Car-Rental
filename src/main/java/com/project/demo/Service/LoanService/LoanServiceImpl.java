@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class LoanServiceImpl {
+public class LoanServiceImpl implements LoanInterface{
 
     LoanRepository loanRepository;
 

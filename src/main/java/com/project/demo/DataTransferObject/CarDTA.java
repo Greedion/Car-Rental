@@ -1,6 +1,5 @@
 package com.project.demo.DataTransferObject;
 import lombok.*;
-
 import java.io.Serializable;
 
 @NoArgsConstructor
@@ -10,7 +9,7 @@ import java.io.Serializable;
 @Getter
 public class CarDTA implements Serializable {
 
-     String id;
+    String id;
 
     String brand;
 

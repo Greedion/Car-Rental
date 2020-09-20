@@ -7,15 +7,9 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.ServletException;
 import java.util.*;
 
@@ -30,6 +24,7 @@ public class LoginService {
     private final Long REFRESH_TOKEN_SPECIAL_CODE = 773095929936149L;
     private final long EXPIRATION_TIME_FOR_REFRESH_TOKEN = 1800000;
     private final String REFRESH_TOKEN_EXCEPTION = "Wrong refresh token Structure or Token Expired";
+
     @Autowired
     public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -69,7 +64,7 @@ public class LoginService {
     }
 
 
-    private String createRefreshToken(POJOUser pojoUser){
+    private String createRefreshToken(POJOUser pojoUser) {
         UserEntity account = returnAccount(pojoUser);
         long actualTime = System.currentTimeMillis();
         Map<String, Object> claims = new HashMap<>();
@@ -100,12 +95,12 @@ public class LoginService {
                 Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(refreshToken);
                 String username = claimsJws.getBody().get("username").toString();
                 String role = claimsJws.getBody().get("role").toString();
-                if(inputUsername.equals(username) && userRepository.existsByUsername(username)){
-                   UserEntity userAccount = userRepository.findByUsername(username);
-                   if(userAccount.getRole().getRole().equals(role)){
-                      POJOUser objectForCreateLoginToken = new POJOUser(inputUsername, null);
-                      return ResponseEntity.ok(createToken(objectForCreateLoginToken));
-                   }
+                if (inputUsername.equals(username) && userRepository.existsByUsername(username)) {
+                    UserEntity userAccount = userRepository.findByUsername(username);
+                    if (userAccount.getRole().getRole().equals(role)) {
+                        POJOUser objectForCreateLoginToken = new POJOUser(inputUsername, null);
+                        return ResponseEntity.ok(createToken(objectForCreateLoginToken));
+                    }
 
                 }
             } catch (Exception e) {
@@ -118,13 +113,11 @@ public class LoginService {
     ResponseEntity<?> start(POJOUser pojoUser) {
         if (checkAccountExist(pojoUser)) {
             if (checkCredentials(pojoUser)) {
-                return ResponseEntity.ok(createToken(pojoUser)+","+createRefreshToken(pojoUser));
+                return ResponseEntity.ok(createToken(pojoUser) + "," + createRefreshToken(pojoUser));
             }
-        }  return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
-
-
-
 
 
 }

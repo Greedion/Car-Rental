@@ -1,5 +1,4 @@
 package com.project.demo.Service.RentalService;
-
 import com.project.demo.Entity.CarEntity;
 import com.project.demo.Entity.LoanEntity;
 import com.project.demo.Entity.UserEntity;
@@ -8,13 +7,9 @@ import com.project.demo.Respository.CarRepository;
 import com.project.demo.Respository.LoanRepository;
 import com.project.demo.Respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
-
 import java.math.MathContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,7 +17,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class RentalServiceImpl {
+public class RentalServiceImpl implements RentalInterface {
 
     UserRepository userRepository;
     LoanRepository loanRepository;
@@ -56,9 +51,7 @@ public class RentalServiceImpl {
                         return ResponseEntity.badRequest().build();
                 }
             } else ResponseEntity.badRequest().build();
-
         }
-
         return ResponseEntity.badRequest().build();
     }
 
@@ -70,10 +63,8 @@ public class RentalServiceImpl {
         } else return null;
     }
 
-    //@EventListener(ApplicationReadyEvent.class)
-    public long countingHowManyHours(String dateStart, String dateStop) {
-        //  String dateStart = "2011-03-14 09:29:58";
-        // String dateStop = "2011-03-14 11:33:43";
+
+    private long countingHowManyHours(String dateStart, String dateStop) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startDate = null;
         Date endDate = null;
@@ -125,16 +116,14 @@ public class RentalServiceImpl {
                     return !loanRepository.existsByEndOfLoanIsLessThanEqualAndStartOfLoanGreaterThanEqualAndCar(endDate, startDate, car.get());
                 }
             }
-
         }
-
         return false;
     }
 
     boolean createReservation(CarEntity inputCar, String inputStartDate, String inputEndDate, String inputUsername) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date startDate = null;
-        Date endDate = null;
+        Date startDate;
+        Date endDate;
         try {
             startDate = format.parse(inputStartDate);
             endDate = format.parse(inputEndDate);
@@ -161,6 +150,5 @@ public class RentalServiceImpl {
         user.setMoneyOnTheAccount(newValue);
         userRepository.save(user);
     }
-
 
 }

@@ -1,5 +1,4 @@
 package com.project.demo.Utils;
-
 import com.project.demo.DataTransferObject.LoanDTA;
 import com.project.demo.Entity.LoanEntity;
 

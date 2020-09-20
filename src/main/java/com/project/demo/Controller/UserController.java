@@ -1,5 +1,4 @@
 package com.project.demo.Controller;
-
 import com.project.demo.Service.UserService.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping(value = "getAll")
-    ResponseEntity<?> getAllUsers(){
+    ResponseEntity<?> getAllUsers() {
         return userService.getAllUsers();
     }
 }

@@ -1,5 +1,4 @@
 package com.project.demo.Controller;
-
 import com.project.demo.Service.LoanService.LoanServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ public class LoanController {
     }
 
     @GetMapping(value = "getAll")
-    ResponseEntity<?> getAllLoan(){
+    ResponseEntity<?> getAllLoan() {
         return loanService.getAllLoans();
     }
 }

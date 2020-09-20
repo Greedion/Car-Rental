@@ -1,5 +1,4 @@
 package com.project.demo.Seciurity;
-
 import com.project.demo.Respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

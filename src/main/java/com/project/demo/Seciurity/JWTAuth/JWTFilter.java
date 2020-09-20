@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 public class JWTFilter extends BasicAuthenticationFilter {
-
 
     UserRepository userRepository;
     UserRoleRepository userRoleRepository;
@@ -45,12 +45,11 @@ public class JWTFilter extends BasicAuthenticationFilter {
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
         }
 
-        if(checkException(exceptionEndPoints, request)){
+        if (checkException(exceptionEndPoints, request)) {
             addCorsHeader(response);
             chain.doFilter(request, response);
             return;
         }
-
 
         addCorsHeader(response);
         String header = request.getHeader("Authorization");
@@ -96,7 +95,6 @@ public class JWTFilter extends BasicAuthenticationFilter {
     }
 
     private void addCorsHeader(HttpServletResponse response) {
-        //TODO: externalize the Allow-Origin
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
         response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
@@ -106,18 +104,16 @@ public class JWTFilter extends BasicAuthenticationFilter {
     private boolean verification(String username, String role) {
         if (userRepository.existsByUsername(username))
             if (userRoleRepository.existsByRole(role)) {
-                if (userRepository.existsByUsernameAndRole(username, userRoleRepository.findByRole(role))) {
-                    return true;
-                }
+                return userRepository.existsByUsernameAndRole(username, userRoleRepository.findByRole(role));
             }
         return false;
     }
 
-    boolean checkException(List<String> exceptionEndPoints, HttpServletRequest request){
-        for (String x:exceptionEndPoints
+    boolean checkException(List<String> exceptionEndPoints, HttpServletRequest request) {
+        for (String x : exceptionEndPoints
         ) {
-            if(request.getRequestURI().contains(x)){
-                return  true;
+            if (request.getRequestURI().contains(x)) {
+                return true;
             }
         }
         return false;

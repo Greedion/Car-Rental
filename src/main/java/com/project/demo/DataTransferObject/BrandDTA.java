@@ -1,6 +1,5 @@
 package com.project.demo.DataTransferObject;
 import lombok.*;
-
 import java.io.Serializable;
 
 @AllArgsConstructor

@@ -1,15 +1,14 @@
 package com.project.demo.Model;
-
 import lombok.*;
-
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Setter
 @Getter
-public class LoanModel {
+public class LoanModel implements Serializable {
 
     @NotEmpty(message = "Car id can't be empty")
     @NotNull(message = "Car id cant be null")

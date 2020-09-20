@@ -1,7 +1,6 @@
 package com.project.demo.DataTransferObject;
-
-
 import lombok.*;
+import java.io.Serializable;
 
 
 @NoArgsConstructor
@@ -9,7 +8,7 @@ import lombok.*;
 @Data
 @Setter
 @Getter
-public class UserDTA {
+public class UserDTA implements Serializable {
 
     String id;
 

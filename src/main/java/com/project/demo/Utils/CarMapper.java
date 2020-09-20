@@ -1,12 +1,10 @@
 package com.project.demo.Utils;
-
 import com.project.demo.DataTransferObject.CarDTA;
 import com.project.demo.Entity.BrandEntity;
 import com.project.demo.Entity.CarEntity;
 import com.project.demo.Respository.BrandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.servlet.ServletException;
 import java.util.Optional;
 

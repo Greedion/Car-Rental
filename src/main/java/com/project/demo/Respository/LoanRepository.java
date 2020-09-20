@@ -4,7 +4,6 @@ import com.project.demo.Entity.CarEntity;
 import com.project.demo.Entity.LoanEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Date;
 
 @Repository

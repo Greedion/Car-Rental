@@ -18,27 +18,27 @@ public class BrandController {
     }
 
     @GetMapping(value = "getAll")
-    ResponseEntity<?> getAllBrand(){
+    ResponseEntity<?> getAllBrand() {
         return brandService.getAllBrands();
     }
 
     @PostMapping(value = "add")
-    ResponseEntity<?> addBrand(@RequestBody BrandDTA inputBrandDTA){
+    ResponseEntity<?> addBrand(@RequestBody BrandDTA inputBrandDTA) {
         return brandService.addBrand(inputBrandDTA);
     }
 
     @PutMapping(value = "update")
-    ResponseEntity<?> updateBrand(@RequestBody BrandDTA inputBrandDTA){
+    ResponseEntity<?> updateBrand(@RequestBody BrandDTA inputBrandDTA) {
         return brandService.modifyBrand(inputBrandDTA);
     }
 
-    @PostMapping(value = "getone")
-    ResponseEntity<?> getOneByID(@RequestParam String id){
+    @PostMapping(value = "getOne")
+    ResponseEntity<?> getOneByID(@RequestParam String id) {
         return brandService.getOneByID(id);
     }
 
     @DeleteMapping(value = "delete")
-    ResponseEntity<?> deleteByID(@RequestParam String id){
+    ResponseEntity<?> deleteByID(@RequestParam String id) {
         return brandService.deleteByID(id);
     }
 }

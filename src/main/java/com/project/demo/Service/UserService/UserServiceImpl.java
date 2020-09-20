@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserInterface {
 
     UserRepository userRepository;
     private final String  FORMAT_EXCEPTION = "Money parse format exception";
