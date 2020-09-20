@@ -32,4 +32,13 @@ public class CarEntity {
     @Column(name = "PRICE", nullable = false)
     Double pricePerHour;
 
+    @OneToMany(mappedBy = "car")
+    private List<LoanEntity> loans;
+
+    public CarEntity(Long id, BrandEntity brand , String description, Double pricePerHour) {
+        this.id = id;
+        this.brand = brand;
+        this.description = description;
+        this.pricePerHour =pricePerHour;
+    }
 }
