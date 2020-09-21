@@ -7,9 +7,11 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import javax.servlet.ServletException;
 import java.util.*;
 
@@ -19,10 +21,17 @@ public class LoginService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
 
-    private final String SECRET = "mysecret";
-    private final long expirationTime = 1800000;
-    private final Long REFRESH_TOKEN_SPECIAL_CODE = 773095929936149L;
-    private final long EXPIRATION_TIME_FOR_REFRESH_TOKEN = 1800000;
+    @Value("${jwt.secret_key}")
+    private  String SECRET_KEY;
+
+    @Value("${jwt.login_token_expiration_time}")
+    private  long expirationTime;
+
+    @Value("${jwt.refresh_token_expiration_time}")
+    private  long EXPIRATION_TIME_FOR_REFRESH_TOKEN;
+
+    private final String REFRESH_TOKEN_SPECIAL_CODE = "773095929936149";
+
     private final String REFRESH_TOKEN_EXCEPTION = "Wrong refresh token Structure or Token Expired";
 
     @Autowired
@@ -59,7 +68,7 @@ public class LoginService {
                 .setClaims(claims)
                 .setIssuedAt(new Date(actualTime))
                 .setExpiration(new Date(actualTime + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
                 .compact();
     }
 
@@ -75,7 +84,7 @@ public class LoginService {
                 .setClaims(claims)
                 .setIssuedAt(new Date(actualTime))
                 .setExpiration(new Date(actualTime + EXPIRATION_TIME_FOR_REFRESH_TOKEN))
-                .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
                 .compact();
 
     }
@@ -92,10 +101,11 @@ public class LoginService {
             refreshToken = refreshToken.replace("Bearer ", "");
 
             try {
-                Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(refreshToken);
+                Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SECRET_KEY.getBytes()).parseClaimsJws(refreshToken);
                 String username = claimsJws.getBody().get("username").toString();
                 String role = claimsJws.getBody().get("role").toString();
-                if (inputUsername.equals(username) && userRepository.existsByUsername(username)) {
+                String specialCode = claimsJws.getBody().get("type").toString();
+                if (inputUsername.equals(username) && userRepository.existsByUsername(username) && specialCode.equals(REFRESH_TOKEN_SPECIAL_CODE)) {
                     UserEntity userAccount = userRepository.findByUsername(username);
                     if (userAccount.getRole().getRole().equals(role)) {
                         POJOUser objectForCreateLoginToken = new POJOUser(inputUsername, null);

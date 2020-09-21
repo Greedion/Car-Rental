@@ -1,10 +1,12 @@
 package com.project.demo.Seciurity;
+
 import com.project.demo.Entity.UserEntity;
 import com.project.demo.Entity.UserRoleEntity;
 import com.project.demo.Respository.UserRepository;
 import com.project.demo.Respository.UserRoleRepository;
 import com.project.demo.Seciurity.JWTAuth.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +24,14 @@ public class WebSeciurityConfig extends WebSecurityConfigurerAdapter {
     UserRepository userRepository;
     UserRoleRepository userRoleRepository;
 
+    @Value("${jwt.secret_key}")
+    private String SECRET_KEY;
+
     @Autowired
     public WebSeciurityConfig(UserRepository userRepository, UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,17 +42,18 @@ public class WebSeciurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/car/add").hasRole("ADMIN")
                 .antMatchers("/car/update").hasRole("ADMIN")
                 .antMatchers("/car/delete").hasRole("ADMIN")
-                .antMatchers("/brand/getOne").hasRole("USER")
-                .antMatchers("/car/getOne").hasRole("USER")
+                .antMatchers("/user/getAll").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/brand/getOne").hasAnyRole("USER", "ADMIN")
+                .antMatchers("user/moneyTransfer").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/loan/createReservation").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/car/getOne").permitAll()
                 .antMatchers("/brand/getAll").permitAll()
                 .antMatchers("/car/getAll").permitAll()
                 .antMatchers("/logIn").permitAll()
-                .antMatchers("/loan/createReservation").permitAll()
                 .antMatchers("loan/getAll").permitAll()
-                .antMatchers("user/moneyTransfer").hasAnyRole("USER", "ADMIN")
-                .antMatchers("user/getAll").permitAll()
+                .antMatchers("user/createAccount").permitAll()
                 .and()
-                .addFilter(new JWTFilter(authenticationManager(), userRepository, userRoleRepository));
+                .addFilter(new JWTFilter(authenticationManager(), userRepository, userRoleRepository, SECRET_KEY));
 
         http.csrf().disable();
         http.cors().disable();

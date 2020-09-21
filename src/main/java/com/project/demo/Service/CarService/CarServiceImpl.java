@@ -1,5 +1,4 @@
 package com.project.demo.Service.CarService;
-
 import com.project.demo.DataTransferObject.CarDTA;
 import com.project.demo.Entity.BrandEntity;
 import com.project.demo.Entity.CarEntity;
@@ -9,7 +8,6 @@ import com.project.demo.Utils.CarMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +41,7 @@ public class CarServiceImpl implements CarInterface {
 
     public ResponseEntity<?> addCar(CarDTA inputCarDTA) throws ServletException {
         CarEntity carEntity = carMapper.mapperFromCarDTAToCarEntity(inputCarDTA);
-        if(carEntity!=null) {
+        if (carEntity != null) {
             carRepository.save(carEntity);
             return ResponseEntity.ok().build();
         } else return ResponseEntity.badRequest().build();
@@ -68,7 +66,7 @@ public class CarServiceImpl implements CarInterface {
                         if (!carEntity.get().getPricePerHour().equals(Double.parseDouble(inputCarDTA.getPricePerHour())))
                             carEntity.get().setPricePerHour(Double.parseDouble(inputCarDTA.getPricePerHour()));
                     }
-                } catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     throw new ServletException(EXCEPTION_ALERT);
                 }
                 carRepository.save(carEntity.get());

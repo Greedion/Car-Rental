@@ -1,5 +1,4 @@
 package com.project.demo.Seciurity.JWTAuth;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +27,5 @@ public class LoginController {
         String username = (String) httpServletRequest.getAttribute("username");
         return loginService.refreshSession(refreshToken, username);
     }
-
 
 }

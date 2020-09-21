@@ -1,10 +1,8 @@
 package com.project.demo.Entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -20,7 +18,7 @@ public class LoanEntity {
     @Column(name = "ID", nullable = false)
     Long id;
 
-    @ManyToOne( fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "CAR", referencedColumnName = "ID")
     CarEntity car;
 
@@ -30,7 +28,7 @@ public class LoanEntity {
     @Column(name = "END_LOAN", nullable = false)
     Date endOfLoan;
 
-    @ManyToOne( fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "USERNAME", referencedColumnName = "ID")
     UserEntity user;
 }

@@ -1,5 +1,4 @@
 package com.project.demo.Service.BrandService;
-
 import com.project.demo.DataTransferObject.BrandDTA;
 import com.project.demo.Entity.BrandEntity;
 import com.project.demo.Respository.BrandRepository;
@@ -7,7 +6,6 @@ import com.project.demo.Utils.BrandMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

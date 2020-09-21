@@ -1,5 +1,4 @@
 package com.project.demo.Respository;
-
 import com.project.demo.Entity.CarEntity;
 import com.project.demo.Entity.LoanEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

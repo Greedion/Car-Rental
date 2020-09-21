@@ -41,5 +41,4 @@ public class RentalController {
         return rentalService.rentalAttempt(loanModel, username);
     }
 
-
 }

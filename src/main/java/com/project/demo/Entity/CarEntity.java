@@ -1,10 +1,8 @@
 package com.project.demo.Entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,7 +20,7 @@ public class CarEntity {
     private Long id;
 
 
-    @ManyToOne( fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "BRAND", referencedColumnName = "ID")
     BrandEntity brand;
 
@@ -35,10 +33,10 @@ public class CarEntity {
     @OneToMany(mappedBy = "car")
     private List<LoanEntity> loans;
 
-    public CarEntity(Long id, BrandEntity brand , String description, Double pricePerHour) {
+    public CarEntity(Long id, BrandEntity brand, String description, Double pricePerHour) {
         this.id = id;
         this.brand = brand;
         this.description = description;
-        this.pricePerHour =pricePerHour;
+        this.pricePerHour = pricePerHour;
     }
 }

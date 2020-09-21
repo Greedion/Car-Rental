@@ -142,11 +142,11 @@ public class RentalServiceImpl implements RentalInterface {
     }
 
 
-    void subtractMoney(UserEntity user, BigDecimal substractMoney) {
+    void subtractMoney(UserEntity user, BigDecimal subtractMoney) {
         BigDecimal money = user.getMoneyOnTheAccount();
         MathContext mc = new MathContext(3);
         BigDecimal newValue;
-        newValue = money.subtract(substractMoney, mc);
+        newValue = money.subtract(subtractMoney, mc);
         user.setMoneyOnTheAccount(newValue);
         userRepository.save(user);
     }

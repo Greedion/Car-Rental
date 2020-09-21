@@ -1,15 +1,16 @@
 package com.project.demo.Seciurity.JWTAuth;
-
 import com.project.demo.Respository.UserRepository;
 import com.project.demo.Respository.UserRoleRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,15 +22,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+
 public class JWTFilter extends BasicAuthenticationFilter {
 
     UserRepository userRepository;
     UserRoleRepository userRoleRepository;
+    private final String SECRET_KEY;
 
-    public JWTFilter(AuthenticationManager authenticationManager, UserRepository userRepository, UserRoleRepository userRoleRepository) {
+    public JWTFilter(AuthenticationManager authenticationManager, UserRepository userRepository, UserRoleRepository userRoleRepository, String secretKey) {
         super(authenticationManager);
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
+        this.SECRET_KEY =secretKey;
     }
 
     @Override
@@ -37,7 +41,10 @@ public class JWTFilter extends BasicAuthenticationFilter {
 
         List<String> exceptionEndPoints = new ArrayList<>();
         exceptionEndPoints.add("/logIn");
-
+        exceptionEndPoints.add("loan/getAll");
+        exceptionEndPoints.add("/car/getAll");
+        exceptionEndPoints.add("/brand/getAll");
+        exceptionEndPoints.add("/car/getOne");
 
         if (request.getMethod().equals("OPTIONS")) {
             response.setHeader("Access-Control-Allow-Origin", "*");
@@ -54,7 +61,6 @@ public class JWTFilter extends BasicAuthenticationFilter {
         addCorsHeader(response);
         String header = request.getHeader("Authorization");
         if (header != null) {
-
             if (header.contains("\"Bearer ")) {
                 int length = header.length();
                 header = header.substring(1, length - 1);
@@ -67,7 +73,7 @@ public class JWTFilter extends BasicAuthenticationFilter {
         header = header.replace("Bearer ", "");
         UsernamePasswordAuthenticationToken authResult = getAuthenticationByToken(header);
         SecurityContextHolder.getContext().setAuthentication(authResult);
-        Jws<Claims> claimsJws = Jwts.parser().setSigningKey("mysecret".getBytes()).parseClaimsJws(header);
+        Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SECRET_KEY.getBytes()).parseClaimsJws(header);
         String username = claimsJws.getBody().get("username").toString();
         String role = claimsJws.getBody().get("role").toString();
         if (verification(username, role)) {
@@ -81,7 +87,7 @@ public class JWTFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) throws ServletException {
         try {
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey("mysecret".getBytes()).parseClaimsJws(header);
+            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SECRET_KEY.getBytes()).parseClaimsJws(header);
             String username = claimsJws.getBody().get("username").toString();
             String role = claimsJws.getBody().get("role").toString();
             System.out.println(role);

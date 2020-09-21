@@ -4,7 +4,6 @@ import com.project.demo.Entity.UserEntity;
 
 public class UserMapper {
 
-
     public static UserDTA mapperFormUserEntityToUserDTA(UserEntity inputUserEntity){
         return new UserDTA(String.valueOf(inputUserEntity.getId()),
                 inputUserEntity.getUsername(),

@@ -4,7 +4,7 @@ import com.project.demo.Entity.LoanEntity;
 
 public class LoanMapper {
 
-    public static LoanDTA mapperFromLoanEntitytoLoanDTA(LoanEntity inputLoanEntity){
+    public static LoanDTA mapperFromLoanEntityToLoanDTA(LoanEntity inputLoanEntity){
         return  new LoanDTA(String.valueOf(inputLoanEntity.getId()),
                 String.valueOf(inputLoanEntity.getCar().getId()),
                 String.valueOf(inputLoanEntity.getStartOfLoan()),
