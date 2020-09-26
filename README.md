@@ -55,7 +55,7 @@
 ### POST
 - loan/createReservation
 - user/moneyTransfer
- ## Access for any Admin
+ ## Access for Admin
 ### GET
 - user/getAll
 
