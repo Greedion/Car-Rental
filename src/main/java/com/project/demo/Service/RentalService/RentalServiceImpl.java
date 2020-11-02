@@ -14,6 +14,7 @@ import java.math.MathContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -109,15 +110,22 @@ public class RentalServiceImpl implements RentalInterface {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (startDate != null && endDate != null) {
-            if (carRepository.existsById(Long.parseLong(carID))) {
-                Optional<CarEntity> car = carRepository.findById(Long.parseLong(carID));
-                if (car.isPresent()) {
-                    return !loanRepository.existsByEndOfLoanIsLessThanEqualAndStartOfLoanGreaterThanEqualAndCar(endDate, startDate, car.get());
+        Optional<CarEntity> car = carRepository.findById(Long.parseLong(carID));
+        if (car.isPresent()) {
+            List<LoanEntity> loans = loanRepository.findAllByCar(car.get());
+            for (LoanEntity x : loans
+            ) {
+                assert endDate != null;
+                if ((startDate.after(x.getStartOfLoan()) && startDate.before(x.getEndOfLoan())) ||
+                        (endDate.after(x.getStartOfLoan()) && endDate.before(x.getEndOfLoan())) ||
+                        (startDate.before(x.getStartOfLoan()) && endDate.after(x.getEndOfLoan()) ||
+                                startDate.equals(x.getStartOfLoan()) || endDate.equals(x.getEndOfLoan()))
+                ) {
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     boolean createReservation(CarEntity inputCar, String inputStartDate, String inputEndDate, String inputUsername) {

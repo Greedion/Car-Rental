@@ -4,9 +4,10 @@ import com.project.demo.Entity.LoanEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface LoanRepository extends JpaRepository<LoanEntity, Long> {
 
-    Boolean existsByEndOfLoanIsLessThanEqualAndStartOfLoanGreaterThanEqualAndCar(Date endDate, Date startDate, CarEntity car);
+    List<LoanEntity> findAllByCar(CarEntity carEntity);
 }
