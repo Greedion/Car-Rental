@@ -1,5 +1,5 @@
 package com.project.demo.Controller;
-import com.project.demo.Seciurity.JWTAuth.POJOUser;
+import com.project.demo.Security.JWTAuth.POJOUser;
 import com.project.demo.Service.UserService.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

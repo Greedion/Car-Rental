@@ -1,4 +1,4 @@
-package com.project.demo.Seciurity.JWTAuth;
+package com.project.demo.Security.JWTAuth;
 
 import com.project.demo.Entity.UserEntity;
 import com.project.demo.Respository.UserRepository;

@@ -1,10 +1,10 @@
-package com.project.demo.Seciurity;
+package com.project.demo.Security;
 
 import com.project.demo.Entity.UserEntity;
 import com.project.demo.Entity.UserRoleEntity;
 import com.project.demo.Respository.UserRepository;
 import com.project.demo.Respository.UserRoleRepository;
-import com.project.demo.Seciurity.JWTAuth.JWTFilter;
+import com.project.demo.Security.JWTAuth.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

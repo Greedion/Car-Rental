@@ -1,4 +1,4 @@
-package com.project.demo.Seciurity.JWTAuth;
+package com.project.demo.Security.JWTAuth;
 import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

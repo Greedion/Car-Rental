@@ -1,5 +1,5 @@
 package com.project.demo.Service.UserService;
-import com.project.demo.Seciurity.JWTAuth.POJOUser;
+import com.project.demo.Security.JWTAuth.POJOUser;
 import org.springframework.http.ResponseEntity;
 import javax.servlet.ServletException;
 

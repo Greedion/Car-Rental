@@ -4,7 +4,7 @@ import com.project.demo.Entity.UserEntity;
 import com.project.demo.Entity.UserRoleEntity;
 import com.project.demo.Respository.UserRepository;
 import com.project.demo.Respository.UserRoleRepository;
-import com.project.demo.Seciurity.JWTAuth.POJOUser;
+import com.project.demo.Security.JWTAuth.POJOUser;
 import com.project.demo.Utils.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
