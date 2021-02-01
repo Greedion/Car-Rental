@@ -12,14 +12,14 @@ import java.util.Optional;
 public class CarMapper {
 
     BrandRepository brandRepository;
-    private final String EXCEPTION_ALERT = "Wrong input data format";
+    private final static String EXCEPTION_ALERT = "Wrong input data format";
 
     @Autowired
     public CarMapper(BrandRepository brandRepository) {
         this.brandRepository = brandRepository;
     }
 
-    public CarEntity mapperFromCarDTAToCarEntity(CarDTO inputCarDTO) throws ServletException {
+    public CarEntity mapperFromCarDTOToCarEntity(CarDTO inputCarDTO) throws ServletException {
         Optional<BrandEntity> brand = brandRepository.findById(Long.parseLong(inputCarDTO.getBrand()));
         try {
             if (brand.isPresent()) {
@@ -33,7 +33,7 @@ public class CarMapper {
         }
     }
 
-    public CarDTO mapperFroMCarEntityToCarDTA(CarEntity inputCarEntity) {
+    public CarDTO mapperFroMCarEntityToCarDTO(CarEntity inputCarEntity) {
         return new CarDTO(String.valueOf(inputCarEntity.getId()), String.valueOf(inputCarEntity.getBrand().getId()), inputCarEntity.getDescription(), String.valueOf(inputCarEntity.getPricePerHour()));
     }
 }

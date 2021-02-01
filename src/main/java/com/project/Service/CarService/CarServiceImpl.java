@@ -36,14 +36,14 @@ public class CarServiceImpl implements CarInterface {
 
         for (CarEntity x : carsFromDatabase
         ) {
-            carsDTA.add(carMapper.mapperFroMCarEntityToCarDTA(x));
+            carsDTA.add(carMapper.mapperFroMCarEntityToCarDTO(x));
         }
         return ResponseEntity.ok(carsDTA);
     }
 
     public ResponseEntity<?> addCar(CarDTO inputCarDTO) throws ServiceOperationException {
         try {
-            CarEntity carEntity = carMapper.mapperFromCarDTAToCarEntity(inputCarDTO);
+            CarEntity carEntity = carMapper.mapperFromCarDTOToCarEntity(inputCarDTO);
 
         if (carEntity != null) {
             carRepository.save(carEntity);
@@ -86,7 +86,7 @@ public class CarServiceImpl implements CarInterface {
         if (carRepository.existsById(Long.parseLong(id))) {
             Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(id));
             if (carEntity.isPresent()) {
-                return ResponseEntity.ok(carMapper.mapperFroMCarEntityToCarDTA(carEntity.get()));
+                return ResponseEntity.ok(carMapper.mapperFroMCarEntityToCarDTO(carEntity.get()));
             }
         }
         return ResponseEntity.badRequest().build();
