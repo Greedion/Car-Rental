@@ -1,9 +1,9 @@
-package com.project.demo.Respository;
+package com.project.demo.Repository;
 import com.project.demo.Entity.CarEntity;
 import com.project.demo.Entity.LoanEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Date;
+
 import java.util.List;
 
 @Repository

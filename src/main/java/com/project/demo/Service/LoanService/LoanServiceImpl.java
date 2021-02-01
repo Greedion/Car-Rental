@@ -1,7 +1,7 @@
 package com.project.demo.Service.LoanService;
 import com.project.demo.DataTransferObject.LoanDTO;
 import com.project.demo.Entity.LoanEntity;
-import com.project.demo.Respository.LoanRepository;
+import com.project.demo.Repository.LoanRepository;
 import com.project.demo.Utils.LoanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

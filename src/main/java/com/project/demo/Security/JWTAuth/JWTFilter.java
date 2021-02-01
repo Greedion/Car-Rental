@@ -1,6 +1,6 @@
 package com.project.demo.Security.JWTAuth;
-import com.project.demo.Respository.UserRepository;
-import com.project.demo.Respository.UserRoleRepository;
+import com.project.demo.Repository.UserRepository;
+import com.project.demo.Repository.UserRoleRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

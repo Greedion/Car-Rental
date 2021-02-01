@@ -1,7 +1,7 @@
 package com.project.demo.Service.BrandService;
 import com.project.demo.DataTransferObject.BrandDTO;
 import com.project.demo.Entity.BrandEntity;
-import com.project.demo.Respository.BrandRepository;
+import com.project.demo.Repository.BrandRepository;
 import com.project.demo.Utils.BrandMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
