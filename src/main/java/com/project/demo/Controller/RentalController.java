@@ -16,18 +16,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("loan")
+@RequestMapping("/api/loan/")
 public class RentalController {
 
-    RentalServiceImpl rentalService;
+    private
+    final RentalServiceImpl rentalService;
 
-    @Autowired
     public RentalController(RentalServiceImpl rentalService) {
         this.rentalService = rentalService;
     }
 
     @PostMapping(value = "createReservation")
     ResponseEntity<?> rentalAttempt(@RequestBody @Valid LoanModel loanModel, HttpServletRequest httpServletRequest, BindingResult result) {
+        ResponseEntity<?> errorMap = validObject(result);
+        if (errorMap != null) return errorMap;
+        String username = (String) httpServletRequest.getAttribute("username");
+        return rentalService.rentalAttempt(loanModel, username);
+    }
+
+    static ResponseEntity<?> validObject(BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
 
@@ -37,8 +44,7 @@ public class RentalController {
             }
             return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
         }
-        String username = (String) httpServletRequest.getAttribute("username");
-        return rentalService.rentalAttempt(loanModel, username);
+        return null;
     }
 
 }

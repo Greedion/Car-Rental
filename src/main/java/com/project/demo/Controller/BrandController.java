@@ -12,12 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("brand")
+@RequestMapping("/api/brand/")
 public class BrandController {
 
-    BrandServiceImpl brandService;
+    final
+    private BrandServiceImpl brandService;
 
-    @Autowired
+
     public BrandController(BrandServiceImpl brandService) {
         this.brandService = brandService;
     }

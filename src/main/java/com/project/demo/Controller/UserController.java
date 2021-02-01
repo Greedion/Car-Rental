@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/api/user/")
 public class UserController {
 
-    UserServiceImpl userService;
+    private
+    final UserServiceImpl userService;
 
-    @Autowired
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
@@ -37,14 +37,8 @@ public class UserController {
 
     @PostMapping(value = "createAccount")
     ResponseEntity<?> createAccount(@Valid @RequestBody POJOUser pojoUser, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-            for (FieldError error : result.getFieldErrors()
-            ) {
-                errorMap.put(error.getField(), error.getDefaultMessage());
-            }
-            return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
-        }
+        ResponseEntity<?> errorMap = RentalController.validObject(result);
+        if (errorMap != null) return errorMap;
         return userService.createAccount(pojoUser);
     }
 }

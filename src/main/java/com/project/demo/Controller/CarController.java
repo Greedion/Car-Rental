@@ -13,12 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("car")
+@RequestMapping("/api/car/")
 public class CarController {
 
-    CarServiceImpl carService;
+    private
+    final CarServiceImpl carService;
 
-    @Autowired
     public CarController(CarServiceImpl carService) {
         this.carService = carService;
     }
