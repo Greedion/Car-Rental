@@ -1,5 +1,5 @@
 package com.project.demo.Service.UserService;
-import com.project.demo.DataTransferObject.UserDTA;
+import com.project.demo.DataTransferObject.UserDTO;
 import com.project.demo.Entity.UserEntity;
 import com.project.demo.Entity.UserRoleEntity;
 import com.project.demo.Respository.UserRepository;
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserInterface {
 
     public ResponseEntity<?> getAllUsers() {
         List<UserEntity> allUserEntities = userRepository.findAll();
-        List<UserDTA> returnObject = new ArrayList<>();
+        List<UserDTO> returnObject = new ArrayList<>();
         for (UserEntity x : allUserEntities
         ) {
             returnObject.add(UserMapper.mapperFormUserEntityToUserDTA(x));

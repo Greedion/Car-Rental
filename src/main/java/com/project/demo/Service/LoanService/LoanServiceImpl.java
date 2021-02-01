@@ -1,5 +1,5 @@
 package com.project.demo.Service.LoanService;
-import com.project.demo.DataTransferObject.LoanDTA;
+import com.project.demo.DataTransferObject.LoanDTO;
 import com.project.demo.Entity.LoanEntity;
 import com.project.demo.Respository.LoanRepository;
 import com.project.demo.Utils.LoanMapper;
@@ -22,7 +22,7 @@ public class LoanServiceImpl implements LoanInterface {
     public ResponseEntity<?> getAllLoans() {
         List<LoanEntity> listLoanObjects = new ArrayList<>();
         listLoanObjects = loanRepository.findAll();
-        List<LoanDTA> objectForReturn = new ArrayList<>();
+        List<LoanDTO> objectForReturn = new ArrayList<>();
         for (LoanEntity x : listLoanObjects
         ) {
             objectForReturn.add(LoanMapper.mapperFromLoanEntityToLoanDTA(x));

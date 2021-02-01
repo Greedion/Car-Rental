@@ -1,7 +1,6 @@
 package com.project.demo.Controller;
-import com.project.demo.DataTransferObject.BrandDTA;
+import com.project.demo.DataTransferObject.BrandDTO;
 import com.project.demo.Service.BrandService.BrandServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -29,19 +28,19 @@ public class BrandController {
     }
 
     @PostMapping(value = "add")
-    ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTA inputBrandDTA, BindingResult result) {
+    ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTO inputBrandDTO, BindingResult result) {
         if (result.hasErrors()) {
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
-        return brandService.addBrand(inputBrandDTA);
+        return brandService.addBrand(inputBrandDTO);
     }
 
     @PutMapping(value = "update")
-    ResponseEntity<?> updateBrand(@Valid @RequestBody BrandDTA inputBrandDTA, BindingResult result) {
+    ResponseEntity<?> updateBrand(@Valid @RequestBody BrandDTO inputBrandDTO, BindingResult result) {
         if (result.hasErrors()) {
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
-        return brandService.modifyBrand(inputBrandDTA);
+        return brandService.modifyBrand(inputBrandDTO);
     }
 
     @PostMapping(value = "getOne")

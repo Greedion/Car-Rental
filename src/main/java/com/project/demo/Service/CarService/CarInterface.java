@@ -1,14 +1,14 @@
 package com.project.demo.Service.CarService;
-import com.project.demo.DataTransferObject.CarDTA;
+import com.project.demo.DataTransferObject.CarDTO;
 import org.springframework.http.ResponseEntity;
 import javax.servlet.ServletException;
 
 public interface CarInterface {
     ResponseEntity<?> getAllCars();
 
-    ResponseEntity<?> addCar(CarDTA inputCarDTA) throws ServletException;
+    ResponseEntity<?> addCar(CarDTO inputCarDTO) throws ServletException;
 
-    ResponseEntity<?> modifyCar(CarDTA inputCarDTA) throws ServletException;
+    ResponseEntity<?> modifyCar(CarDTO inputCarDTO) throws ServletException;
 
     ResponseEntity<?> getOneByID(String id);
 

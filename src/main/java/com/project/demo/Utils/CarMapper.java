@@ -1,5 +1,5 @@
 package com.project.demo.Utils;
-import com.project.demo.DataTransferObject.CarDTA;
+import com.project.demo.DataTransferObject.CarDTO;
 import com.project.demo.Entity.BrandEntity;
 import com.project.demo.Entity.CarEntity;
 import com.project.demo.Respository.BrandRepository;
@@ -19,21 +19,21 @@ public class CarMapper {
         this.brandRepository = brandRepository;
     }
 
-    public CarEntity mapperFromCarDTAToCarEntity(CarDTA inputCarDTA) throws ServletException {
-        Optional<BrandEntity> brand = brandRepository.findById(Long.parseLong(inputCarDTA.getBrand()));
+    public CarEntity mapperFromCarDTAToCarEntity(CarDTO inputCarDTO) throws ServletException {
+        Optional<BrandEntity> brand = brandRepository.findById(Long.parseLong(inputCarDTO.getBrand()));
         try {
             if (brand.isPresent()) {
-                if (inputCarDTA.getId() == null || inputCarDTA.getId().equals(""))
-                    return new CarEntity(null, brand.get(), inputCarDTA.getDescription(), Double.parseDouble(inputCarDTA.getPricePerHour()));
+                if (inputCarDTO.getId() == null || inputCarDTO.getId().equals(""))
+                    return new CarEntity(null, brand.get(), inputCarDTO.getDescription(), Double.parseDouble(inputCarDTO.getPricePerHour()));
                 else
-                    return new CarEntity(Long.parseLong(inputCarDTA.getId()), brand.get(), inputCarDTA.getDescription(), Double.parseDouble(inputCarDTA.getPricePerHour()));
+                    return new CarEntity(Long.parseLong(inputCarDTO.getId()), brand.get(), inputCarDTO.getDescription(), Double.parseDouble(inputCarDTO.getPricePerHour()));
             } else return null;
         } catch (NumberFormatException e) {
             throw new ServletException(EXCEPTION_ALERT);
         }
     }
 
-    public CarDTA mapperFroMCarEntityToCarDTA(CarEntity inputCarEntity) {
-        return new CarDTA(String.valueOf(inputCarEntity.getId()), String.valueOf(inputCarEntity.getBrand().getId()), inputCarEntity.getDescription(), String.valueOf(inputCarEntity.getPricePerHour()));
+    public CarDTO mapperFroMCarEntityToCarDTA(CarEntity inputCarEntity) {
+        return new CarDTO(String.valueOf(inputCarEntity.getId()), String.valueOf(inputCarEntity.getBrand().getId()), inputCarEntity.getDescription(), String.valueOf(inputCarEntity.getPricePerHour()));
     }
 }

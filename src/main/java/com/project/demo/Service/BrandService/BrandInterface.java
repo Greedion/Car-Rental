@@ -1,13 +1,13 @@
 package com.project.demo.Service.BrandService;
-import com.project.demo.DataTransferObject.BrandDTA;
+import com.project.demo.DataTransferObject.BrandDTO;
 import org.springframework.http.ResponseEntity;
 
 public interface BrandInterface {
     ResponseEntity<?> getAllBrands();
 
-    ResponseEntity<?> addBrand(BrandDTA inputBrandDTA);
+    ResponseEntity<?> addBrand(BrandDTO inputBrandDTO);
 
-    ResponseEntity<?> modifyBrand(BrandDTA inputBrandDTA);
+    ResponseEntity<?> modifyBrand(BrandDTO inputBrandDTO);
 
     ResponseEntity<?> getOneByID(String id);
 

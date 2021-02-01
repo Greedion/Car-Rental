@@ -1,5 +1,5 @@
 package com.project.demo.Service.BrandService;
-import com.project.demo.DataTransferObject.BrandDTA;
+import com.project.demo.DataTransferObject.BrandDTO;
 import com.project.demo.Entity.BrandEntity;
 import com.project.demo.Respository.BrandRepository;
 import com.project.demo.Utils.BrandMapper;
@@ -23,7 +23,7 @@ public class BrandServiceImpl implements BrandInterface {
 
     public ResponseEntity<?> getAllBrands() {
         List<BrandEntity> brandsFromDatabase = brandRepository.findAll();
-        List<BrandDTA> brandsDTA = new ArrayList<>();
+        List<BrandDTO> brandsDTA = new ArrayList<>();
 
         for (BrandEntity x : brandsFromDatabase
         ) {
@@ -32,19 +32,19 @@ public class BrandServiceImpl implements BrandInterface {
         return ResponseEntity.ok(brandsDTA);
     }
 
-    public ResponseEntity<?> addBrand(BrandDTA inputBrandDTA) {
-        BrandEntity brandForSave = BrandMapper.mapperFromBrandDTAToBrandEntity(inputBrandDTA);
+    public ResponseEntity<?> addBrand(BrandDTO inputBrandDTO) {
+        BrandEntity brandForSave = BrandMapper.mapperFromBrandDTAToBrandEntity(inputBrandDTO);
         brandRepository.save(brandForSave);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> modifyBrand(BrandDTA inputBrandDTA) {
-        if (brandRepository.existsById(Long.parseLong(inputBrandDTA.getId()))) {
-            Optional<BrandEntity> brandForSave = brandRepository.findById(Long.parseLong(inputBrandDTA.getId()));
+    public ResponseEntity<?> modifyBrand(BrandDTO inputBrandDTO) {
+        if (brandRepository.existsById(Long.parseLong(inputBrandDTO.getId()))) {
+            Optional<BrandEntity> brandForSave = brandRepository.findById(Long.parseLong(inputBrandDTO.getId()));
             if (brandForSave.isPresent()) {
-                if (inputBrandDTA.getBrand() != null && !inputBrandDTA.getBrand().equals("")) {
-                    if (!inputBrandDTA.getBrand().equals(brandForSave.get().getBrand())) {
-                        brandForSave.get().setBrand(inputBrandDTA.getBrand());
+                if (inputBrandDTO.getBrand() != null && !inputBrandDTO.getBrand().equals("")) {
+                    if (!inputBrandDTO.getBrand().equals(brandForSave.get().getBrand())) {
+                        brandForSave.get().setBrand(inputBrandDTO.getBrand());
                         brandRepository.save(brandForSave.get());
                         return ResponseEntity.ok().build();
                     }

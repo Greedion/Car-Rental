@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @Setter
 @Getter
-public class BrandDTA implements Serializable {
+public class BrandDTO implements Serializable {
 
     @Pattern(regexp = "^[0-9]*$", message = "Accept only digits")
     String id;

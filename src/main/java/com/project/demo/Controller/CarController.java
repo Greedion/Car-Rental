@@ -1,7 +1,6 @@
 package com.project.demo.Controller;
-import com.project.demo.DataTransferObject.CarDTA;
+import com.project.demo.DataTransferObject.CarDTO;
 import com.project.demo.Service.CarService.CarServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -29,19 +28,19 @@ public class CarController {
     }
 
     @PostMapping(value = "add")
-    ResponseEntity<?> addCar(@Valid @RequestBody CarDTA inputCarDTA, BindingResult result) throws ServletException {
+    ResponseEntity<?> addCar(@Valid @RequestBody CarDTO inputCarDTO, BindingResult result) throws ServletException {
         if (result.hasErrors()) {
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
-        return carService.addCar(inputCarDTA);
+        return carService.addCar(inputCarDTO);
     }
 
     @PutMapping(value = "update")
-    ResponseEntity<?> updateCar(@RequestBody CarDTA inputCarDTA, BindingResult result) throws ServletException {
+    ResponseEntity<?> updateCar(@RequestBody CarDTO inputCarDTO, BindingResult result) throws ServletException {
         if (result.hasErrors()) {
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
-        return carService.modifyCar(inputCarDTA);
+        return carService.modifyCar(inputCarDTO);
     }
 
     @PostMapping(value = "getOne")

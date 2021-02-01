@@ -1,5 +1,5 @@
 package com.project.demo.Service.CarService;
-import com.project.demo.DataTransferObject.CarDTA;
+import com.project.demo.DataTransferObject.CarDTO;
 import com.project.demo.Entity.BrandEntity;
 import com.project.demo.Entity.CarEntity;
 import com.project.demo.Respository.BrandRepository;
@@ -30,7 +30,7 @@ public class CarServiceImpl implements CarInterface {
 
     public ResponseEntity<?> getAllCars() {
         List<CarEntity> carsFromDatabase = carRepository.findAll();
-        List<CarDTA> carsDTA = new ArrayList<>();
+        List<CarDTO> carsDTA = new ArrayList<>();
 
         for (CarEntity x : carsFromDatabase
         ) {
@@ -39,32 +39,32 @@ public class CarServiceImpl implements CarInterface {
         return ResponseEntity.ok(carsDTA);
     }
 
-    public ResponseEntity<?> addCar(CarDTA inputCarDTA) throws ServletException {
-        CarEntity carEntity = carMapper.mapperFromCarDTAToCarEntity(inputCarDTA);
+    public ResponseEntity<?> addCar(CarDTO inputCarDTO) throws ServletException {
+        CarEntity carEntity = carMapper.mapperFromCarDTAToCarEntity(inputCarDTO);
         if (carEntity != null) {
             carRepository.save(carEntity);
             return ResponseEntity.ok().build();
         } else return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<?> modifyCar(CarDTA inputCarDTA) throws ServletException {
-        if (carRepository.existsById(Long.parseLong(inputCarDTA.getId()))) {
-            Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(inputCarDTA.getId()));
+    public ResponseEntity<?> modifyCar(CarDTO inputCarDTO) throws ServletException {
+        if (carRepository.existsById(Long.parseLong(inputCarDTO.getId()))) {
+            Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(inputCarDTO.getId()));
             if (carEntity.isPresent()) {
                 try {
-                    if (Long.parseLong(inputCarDTA.getBrand()) != carEntity.get().getBrand().getId()) {
-                        Optional<BrandEntity> newBrand = brandRepository.findById(Long.parseLong(inputCarDTA.getBrand()));
+                    if (Long.parseLong(inputCarDTO.getBrand()) != carEntity.get().getBrand().getId()) {
+                        Optional<BrandEntity> newBrand = brandRepository.findById(Long.parseLong(inputCarDTO.getBrand()));
                         newBrand.ifPresent(brandEntity -> carEntity.get().setBrand(brandEntity));
                         if (!newBrand.isPresent())
                             return ResponseEntity.badRequest().build();
                     }
-                    if (inputCarDTA.getDescription() != null && !inputCarDTA.getDescription().equals("")) {
-                        if (!carEntity.get().getDescription().equals(inputCarDTA.getDescription()))
-                            carEntity.get().setDescription(inputCarDTA.getDescription());
+                    if (inputCarDTO.getDescription() != null && !inputCarDTO.getDescription().equals("")) {
+                        if (!carEntity.get().getDescription().equals(inputCarDTO.getDescription()))
+                            carEntity.get().setDescription(inputCarDTO.getDescription());
                     }
-                    if (inputCarDTA.getPricePerHour() != null && !inputCarDTA.getPricePerHour().equals("")) {
-                        if (!carEntity.get().getPricePerHour().equals(Double.parseDouble(inputCarDTA.getPricePerHour())))
-                            carEntity.get().setPricePerHour(Double.parseDouble(inputCarDTA.getPricePerHour()));
+                    if (inputCarDTO.getPricePerHour() != null && !inputCarDTO.getPricePerHour().equals("")) {
+                        if (!carEntity.get().getPricePerHour().equals(Double.parseDouble(inputCarDTO.getPricePerHour())))
+                            carEntity.get().setPricePerHour(Double.parseDouble(inputCarDTO.getPricePerHour()));
                     }
                 } catch (NumberFormatException e) {
                     throw new ServletException(EXCEPTION_ALERT);
