@@ -29,7 +29,7 @@
 
 ## Technology
  - Spring Boot
- - Spring Seciurity
+ - Spring Security
  - Java JWT Token
  - Spring Validation
  - Spring Web
@@ -38,33 +38,43 @@
  - Maven
  - Lombok
  
- 
+ #Credentaials:
+ ## Admin/Admin
+ ## User/User
  # Api Endpoints: 
-> Default adress: http://localhost:8080/
+> Default adress: http://localhost:8080/api
 ## Access for everyone
-### GET
-- loan/getAll
-- car/getAll
-### POST
-- user/createAccount
-- logIn
-- brand/getAll
-- car/getOne
-- brand/getOne
- ## Access for any authenticated user
-### POST
-- loan/createReservation
-- user/moneyTransfer
- ## Access for Admin
-### GET
-- user/getAll
+### Authorization
+- POST: /auth/signin 
+### Create account
+- POST /user/createaccount
+### Get brand/s
+- GET /brand
+- GET /brand/{id}
+### Get car/s
+- GET /car
+- GET /car/{id}
+## Access for user
+- GET /loan
+- POST /loan/createreservation
+- POST /user/moneytransfer
+## Access for admin
+- POST /brand
+- PUT /brand
+- DELETE /brand/{id}
+- POST /car
+- PUT /car
+- DELETE /car/{id}
+- GET /loan
+- POST /loan/createreservation
+- POST /user/moneytransfer
+- GET /user
 
-### POST
-- car/add
-- brand/add
-### PUT
-- car/update
-- brand/update
-### DELETE
-- car/delete
-- brand/delete
+
+
+
+
+
+
+
+
