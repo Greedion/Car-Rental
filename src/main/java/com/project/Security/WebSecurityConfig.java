@@ -2,18 +2,24 @@ package com.project.Security;
 
 import com.project.Entity.UserEntity;
 import com.project.Entity.UserRoleEntity;
+import com.project.Security.JWTAuth.AuthEntryPointJwt;
 import com.project.Security.JWTAuth.JWTFilter;
 import com.project.Repository.UserRepository;
 import com.project.Repository.UserRoleRepository;
-import org.springframework.beans.factory.annotation.Value;
+import com.project.Security.JWTAuth.JwtUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import java.math.BigDecimal;
 import java.util.Optional;
 
@@ -22,44 +28,51 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
+    private final AuthEntryPointJwt unauthorizedHandler;
+    private final JwtUtils jwtUtils;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Value("${jwt.secret_key}")
-    private String SECRET_KEY;
-
-    public WebSecurityConfig(UserRepository userRepository, UserRoleRepository userRoleRepository) {
+    public WebSecurityConfig(UserRepository userRepository,
+                             UserRoleRepository userRoleRepository,
+                             AuthEntryPointJwt unauthorizedHandler,
+                             JwtUtils jwtUtils,
+                             UserDetailsServiceImpl userDetailsService) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.jwtUtils = jwtUtils;
+        this.userDetailsService = userDetailsService;
     }
 
+    @Bean
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/api/brand/add").hasRole("ADMIN")
-                .antMatchers("/api/brand/update").hasRole("ADMIN")
-                .antMatchers("/api/brand/delete").hasRole("ADMIN")
-                .antMatchers("/api/car/add").hasRole("ADMIN")
-                .antMatchers("/api/car/update").hasRole("ADMIN")
-                .antMatchers("/api/car/delete").hasRole("ADMIN")
-                .antMatchers("/api/user/getAll").hasRole("ADMIN")
-                .antMatchers("/api/user/moneyTransfer").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/loan/createReservation").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/brand/getOne").permitAll()
-                .antMatchers("/api/car/getOne").permitAll()
-                .antMatchers("/api/brand/getAll").permitAll()
-                .antMatchers("/api/car/getAll").permitAll()
-                .antMatchers("/api/logIn").permitAll()
-                .antMatchers("/api/loan/getAll").permitAll()
-                .antMatchers("/api/user/createAccount").permitAll()
-                .and()
-                .addFilter(new JWTFilter(authenticationManager(), userRepository, userRoleRepository, SECRET_KEY));
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-        http.csrf().disable();
-        http.cors().disable();
+    JWTFilter authenticationJwtTokenFilter(){
+        return new JWTFilter(jwtUtils, userDetailsService);
     }
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+            http
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                    .antMatchers(HttpMethod.POST, "api/user/createaccount").permitAll()
+                .anyRequest().authenticated();
+            http
+                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.csrf().disable();
+        http.cors().disable();
     }
 
     @EventListener(ApplicationReadyEvent.class)

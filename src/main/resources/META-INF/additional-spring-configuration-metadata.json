@@ -9,10 +9,5 @@
       "name": "jwt.login_token_expiration_time",
       "type": "java.lang.String",
       "description": "Login token expiration time in ms."
-    },
-    {
-      "name": "jwt.refresh_token_expiration_time",
-      "type": "java.lang.String",
-      "description": "Refresh token expiration time in ms."
     }
   ] }

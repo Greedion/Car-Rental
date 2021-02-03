@@ -3,6 +3,8 @@ import com.project.DataTransferObject.BrandDTO;
 import com.project.Entity.BrandEntity;
 import com.project.Repository.BrandRepository;
 import com.project.Utils.BrandMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -12,13 +14,14 @@ import java.util.Optional;
 @Service
 public class BrandServiceImpl implements BrandInterface {
 
+    private final Logger logger = LoggerFactory.getLogger(BrandServiceImpl.class);
     private final BrandRepository brandRepository;
 
     public BrandServiceImpl(BrandRepository brandRepository) {
         this.brandRepository = brandRepository;
     }
 
-    public ResponseEntity<?> getAllBrands() {
+    public ResponseEntity<List<BrandDTO>> getAllBrands() {
         List<BrandEntity> brandsFromDatabase = brandRepository.findAll();
         List<BrandDTO> brandsDTA = new ArrayList<>();
 
@@ -48,15 +51,17 @@ public class BrandServiceImpl implements BrandInterface {
                 }
             }
         }
+        logger.error("Attempt to modify the brand using a non-existent id");
         return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<?> getOneByID(String id) {
+    public ResponseEntity<BrandDTO> getOneByID(String id) {
         if (brandRepository.existsById(Long.parseLong(id))) {
             Optional<BrandEntity> brandObject = brandRepository.findById(Long.parseLong(id));
             if (brandObject.isPresent())
                 return ResponseEntity.ok(BrandMapper.mapperFromBrandEntityToBrandDTA(brandObject.get()));
         }
+        logger.error("Attempt to get the brand using a non-existent id");
         return ResponseEntity.badRequest().build();
     }
 
@@ -68,6 +73,7 @@ public class BrandServiceImpl implements BrandInterface {
                 return ResponseEntity.ok().build();
             }
         }
+        logger.error("Attempt to delete the brand using a non-existent id");
         return ResponseEntity.badRequest().build();
     }
 

@@ -24,7 +24,7 @@ logging:
 jwt:
   secret_key: mysecret
   login_token_expiration_time: 600000
-  refresh_token_expiration_time: 1800000
+
 
 
 

@@ -6,8 +6,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Setter
-@Getter
 public class LoanModel implements Serializable {
 
     @NotEmpty(message = "Car id can't be empty")

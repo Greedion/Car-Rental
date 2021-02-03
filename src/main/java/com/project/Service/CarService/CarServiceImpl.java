@@ -7,6 +7,8 @@ import com.project.Exception.ServiceOperationException;
 import com.project.Repository.BrandRepository;
 import com.project.Repository.CarRepository;
 import com.project.Utils.CarMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 @Service
 public class CarServiceImpl implements CarInterface {
 
+    private final Logger logger = LoggerFactory.getLogger(CarServiceImpl.class);
     private final static String EXCEPTION_ALERT = "Wrong input data format Exception";
 
     private final CarRepository carRepository;
@@ -30,7 +33,7 @@ public class CarServiceImpl implements CarInterface {
         this.carMapper = carMapper;
     }
 
-    public ResponseEntity<?> getAllCars() {
+    public ResponseEntity<List<CarDTO>> getAllCars() {
         List<CarEntity> carsFromDatabase = carRepository.findAll();
         List<CarDTO> carsDTA = new ArrayList<>();
 
@@ -50,6 +53,7 @@ public class CarServiceImpl implements CarInterface {
             return ResponseEntity.ok().build();
         } else return ResponseEntity.badRequest().build();
         }catch (ServletException e){
+            logger.error("Attempt mapping object CarEntity to CarDTO.");
             throw new ServiceOperationException("Mapping from CarDTO to CarEntity Exception");
         }
     }
@@ -74,21 +78,29 @@ public class CarServiceImpl implements CarInterface {
                                 carEntity.get().setPricePerHour(Double.parseDouble(inputCarDTO.getPricePerHour()));
                         }
                     } catch (NumberFormatException e) {
+                        logger.error("Attempt parse id / brand from String to Long.");
                         throw new ServiceOperationException(EXCEPTION_ALERT);
                     }
                     carRepository.save(carEntity.get());
                     return ResponseEntity.ok().build();
-                } else return ResponseEntity.badRequest().build();
-            } else return ResponseEntity.badRequest().build();
+                } else {
+                    logger.error("Attempt to use an empty CarEntity");
+                    return ResponseEntity.badRequest().build();
+                }
+            } else {
+                logger.error("Attempt to modify car using a non-existent id");
+                return ResponseEntity.badRequest().build();
+            }
     }
 
-    public ResponseEntity<?> getOneByID(String id) {
+    public ResponseEntity<CarDTO> getOneByID(String id) {
         if (carRepository.existsById(Long.parseLong(id))) {
             Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(id));
             if (carEntity.isPresent()) {
                 return ResponseEntity.ok(carMapper.mapperFroMCarEntityToCarDTO(carEntity.get()));
             }
         }
+        logger.error("Attempt to get car using a non-existent id");
         return ResponseEntity.badRequest().build();
     }
 
@@ -100,6 +112,7 @@ public class CarServiceImpl implements CarInterface {
                 return ResponseEntity.ok().build();
             }
         }
+        logger.error("Attempt to delete car using a non-existent id");
         return ResponseEntity.badRequest().build();
     }
 

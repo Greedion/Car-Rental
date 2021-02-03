@@ -3,16 +3,17 @@ import com.project.DataTransferObject.CarDTO;
 import com.project.Exception.ServiceOperationException;
 import org.springframework.http.ResponseEntity;
 import javax.servlet.ServletException;
+import java.util.List;
 
 public interface CarInterface {
 
-    ResponseEntity<?> getAllCars();
+    ResponseEntity<List<CarDTO>> getAllCars();
 
     ResponseEntity<?> addCar(CarDTO inputCarDTO) throws ServletException, ServiceOperationException;
 
     ResponseEntity<?> modifyCar(CarDTO inputCarDTO) throws ServletException, ServiceOperationException;
 
-    ResponseEntity<?> getOneByID(String id);
+    ResponseEntity<CarDTO> getOneByID(String id);
 
     ResponseEntity<?> deleteByID(String id);
 }

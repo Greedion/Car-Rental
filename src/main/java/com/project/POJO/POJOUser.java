@@ -1,4 +1,4 @@
-package com.project.Security.JWTAuth;
+package com.project.POJO;
 import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -6,8 +6,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class POJOUser implements Serializable {

@@ -1,4 +1,5 @@
 package com.project.Service.RentalService;
+
 import com.project.Entity.CarEntity;
 import com.project.Entity.LoanEntity;
 import com.project.Entity.UserEntity;
@@ -7,8 +8,11 @@ import com.project.Model.LoanModel;
 import com.project.Repository.CarRepository;
 import com.project.Repository.LoanRepository;
 import com.project.Repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.ParseException;
@@ -20,6 +24,7 @@ import java.util.Optional;
 @Service
 public class RentalServiceImpl implements RentalInterface {
 
+    private final Logger logger = LoggerFactory.getLogger(RentalServiceImpl.class);
     private final UserRepository userRepository;
     private final LoanRepository loanRepository;
     private final CarRepository carRepository;
@@ -50,14 +55,21 @@ public class RentalServiceImpl implements RentalInterface {
                             UserEntity user = userRepository.findByUsername(username);
                             subtractMoney(user, price);
                             return ResponseEntity.ok().build();
-                        } else
+                        } else {
+                            logger.error("Failed to create an account");
                             return ResponseEntity.badRequest().build();
+                        }
                     }
-                } else ResponseEntity.badRequest().build();
+                } else {
+                    ResponseEntity.badRequest().build();
+                }
             }
+            logger.error("Attempt used empty value for money or carPrice.");
             return ResponseEntity.badRequest().build();
-        }catch (ParseException e){
-           throw new ServiceOperationException(PARSE_EXCEPTION);
+
+        } catch (ParseException e) {
+            logger.error("Attempt to parse String to BigDecimal.");
+            throw new ServiceOperationException(PARSE_EXCEPTION);
         }
     }
 
@@ -66,7 +78,10 @@ public class RentalServiceImpl implements RentalInterface {
         if (userRepository.existsByUsername(username)) {
             UserEntity user = userRepository.findByUsername(username);
             return user.getMoneyOnTheAccount();
-        } else return null;
+        } else {
+            logger.error("Attempt get money value from non-existent username.");
+            return null;
+        }
     }
 
     private long countingHowManyHours(String dateStart, String dateStop) throws ParseException {
@@ -82,7 +97,10 @@ public class RentalServiceImpl implements RentalInterface {
             System.out.println("Time in hours: " + diffHours + " hours.");
             if (diffSeconds == 0 && diffMinutes == 0) return diffHours;
             else return diffHours + 1;
-        } else throw new NumberFormatException(DATE_FORMAT_EXCEPTION);
+        } else {
+            logger.error("Attempt parse String to Date format.");
+            throw new NumberFormatException(DATE_FORMAT_EXCEPTION);
+        }
     }
 
     private Double getCarPricePerHour(String carID) {
@@ -92,14 +110,15 @@ public class RentalServiceImpl implements RentalInterface {
                 return car.get().getPricePerHour();
             }
         }
+        logger.error("Attempt get carPricePerHour value from non-existent carID.");
         return null;
     }
 
     private Date getDateFromString(String date) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
         Date formattedDate;
-            formattedDate = format.parse(date);
-            return formattedDate;
+        formattedDate = format.parse(date);
+        return formattedDate;
     }
 
     private boolean timeAreaIsFree(String dateStart, String dateStop, String carID) throws ParseException {
