@@ -49,6 +49,7 @@ public class UserController {
     }
 
     @GetMapping(consumes = "application/json")
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<List<UserDTO>> getAllUsers() {
         return userService.getAllUsers();
     }

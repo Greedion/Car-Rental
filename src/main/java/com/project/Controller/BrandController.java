@@ -40,7 +40,7 @@ public class BrandController {
 
     @GetMapping(value = "/{id}", produces = "application/json")
     ResponseEntity<BrandDTO> getOneByID(@PathVariable String id) throws ResponseStatusException {
-        try {
+        try{
             if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.getOneByID(id);
             } else {
@@ -55,8 +55,14 @@ public class BrandController {
     @PostMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTO inputBrandDTO, BindingResult result) {
-        if (result.hasErrors()) {
-            logger.error("Attempt to add Brand with wrong data structure.");
+        if (inputBrandDTO == null) {
+            logger.error("Attempt create brand with empty input data.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create brand with empty input data.");
+        } else if (inputBrandDTO.getBrand() == null || inputBrandDTO.getId() == null) {
+            logger.error("Attempt update brand with empty input data.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create brand with empty input data.");
+        } else if (result.hasErrors()) {
+            logger.error("Attempt to create Brand with wrong data structure.");
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
         return brandService.addBrand(inputBrandDTO);
@@ -81,7 +87,7 @@ public class BrandController {
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> deleteByID(@PathVariable String id) {
-        try {
+        try{
             if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.deleteByID(id);
             } else {

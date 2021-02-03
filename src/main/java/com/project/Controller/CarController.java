@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,6 @@ public class CarController {
             logger.error("Attempt parse String to Long");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt parse String to Long.");
         }
-
     }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
