@@ -38,7 +38,7 @@
  - Maven
  - Lombok
  
- # Credentaials:
+ # Credentials
  ## Admin/Admin
  ## User/User
  # Api Endpoints: 
