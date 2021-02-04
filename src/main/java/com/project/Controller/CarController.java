@@ -40,6 +40,11 @@ public class CarController {
 
     @GetMapping(value = "/{id}", produces = "application/json")
     ResponseEntity<CarDTO> getOneByID(@PathVariable String id) {
+        if(id == null)
+        {
+            logger.error("Attempt get car with empty input data.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt get car with empty input data.");
+        }
         try {
             if (carRepository.existsById(Long.parseLong(id))) {
                 return carService.getOneByID(id);
@@ -71,7 +76,6 @@ public class CarController {
     @PutMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> updateCar(@RequestBody CarDTO inputCarDTO, BindingResult result) throws ServiceOperationException {
-
         if (inputCarDTO == null) {
             logger.error("Attempt update car with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update car with empty input data.");

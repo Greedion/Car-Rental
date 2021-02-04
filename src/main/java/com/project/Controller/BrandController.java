@@ -40,6 +40,11 @@ public class BrandController {
 
     @GetMapping(value = "/{id}", produces = "application/json")
     ResponseEntity<BrandDTO> getOneByID(@PathVariable String id) throws ResponseStatusException {
+        if(id == null)
+        {
+            logger.error("Attempt get brand with empty input data.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt get brand with empty input data.");
+        }
         try{
             if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.getOneByID(id);
