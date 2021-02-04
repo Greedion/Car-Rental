@@ -3,6 +3,7 @@ package com.project.Controller;
 import com.project.Exception.ServiceOperationException;
 import com.project.Model.LoanModel;
 import com.project.Service.RentalService.RentalServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class RentalController {
         this.rentalService = rentalService;
     }
 
+    @ApiOperation(value = "Create reservation for singe car.", notes = "Needed authentication")
     @PostMapping(value = "createreservation", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     ResponseEntity<?> rentalAttempt(@RequestBody @Valid LoanModel loanModel, HttpServletRequest httpServletRequest, BindingResult result) throws ServiceOperationException {

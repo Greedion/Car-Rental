@@ -14,6 +14,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -50,7 +51,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    JWTFilter authenticationJwtTokenFilter(){
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**");
+    }
+
+    JWTFilter authenticationJwtTokenFilter() {
         return new JWTFilter(jwtUtils, userDetailsService);
     }
 
@@ -64,15 +75,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             http
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-                    .antMatchers(HttpMethod.POST, "api/user/createaccount").permitAll()
-                .anyRequest().authenticated();
-            http
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/api/user").hasRole("ADMIN")
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .antMatchers(HttpMethod.POST, "api/user/createaccount").permitAll()
+                .anyRequest().authenticated().and()
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.csrf().disable();
-        http.cors().disable();
+            http.csrf().disable();
+            http.cors().disable();
     }
 
     @EventListener(ApplicationReadyEvent.class)

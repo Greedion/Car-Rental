@@ -4,10 +4,12 @@ import com.project.DataTransferObject.UserDTO;
 import com.project.Exception.ServiceOperationException;
 import com.project.Service.UserService.UserServiceImpl;
 import com.project.POJO.POJOUser;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -32,6 +34,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @ApiOperation(value = "Transfer money to account.", notes = "Needed authentication")
     @PostMapping(value = "/moneytransfer", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     ResponseEntity<?> moneyTransfer(String inputMoney, HttpServletRequest httpServletRequest) throws ServiceOperationException {
@@ -48,12 +51,14 @@ public class UserController {
         }
     }
 
-    @GetMapping(consumes = "application/json")
+    @ApiOperation(value = "Get all users.", notes = "Needed authorization from Admin account")
+    @GetMapping(produces = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<List<UserDTO>> getAllUsers() {
         return userService.getAllUsers();
     }
 
+    @ApiOperation(value = "Create account.")
     @PostMapping(value = "/createaccount", produces = "application/json", consumes = "application/json")
     ResponseEntity<?> createAccount(@Valid @RequestBody POJOUser pojoUser, BindingResult result) {
 

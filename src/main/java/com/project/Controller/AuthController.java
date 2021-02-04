@@ -3,6 +3,8 @@ package com.project.Controller;
 import com.project.Security.JWTAuth.JwtUtils;
 import com.project.Service.AuthService.AuthServiceImpl;
 import com.project.POJO.POJOUser;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,7 @@ public class AuthController {
         this.jwtUtils = jwtUtils;
     }
 
+    @ApiOperation(value = "Log in.", notes = "Default account's : Admin/Admin User/User")
     @PostMapping("/signin")
     ResponseEntity<?> login(@RequestBody POJOUser pojoUser) {
         if(pojoUser==null){

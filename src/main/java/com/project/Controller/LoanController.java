@@ -2,6 +2,7 @@ package com.project.Controller;
 
 import com.project.DataTransferObject.LoanDTO;
 import com.project.Service.LoanService.LoanServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class LoanController {
         this.loanService = loanService;
     }
 
+    @ApiOperation(value = "Get all loans.", notes = "Needed authentication.")
     @GetMapping(produces = "application/json")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     ResponseEntity<List<LoanDTO>> getAllLoan() {
