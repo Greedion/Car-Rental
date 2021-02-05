@@ -32,11 +32,6 @@ public class BrandController {
     private final BrandServiceImpl brandService;
     private final BrandRepository brandRepository;
 
-    private final String VAL_1 = "1";
-    private final String VAL_2 = "2";
-    private final String VAL_3 = "3";
-    private final String VAL_4 = "4";
-
     public BrandController(BrandServiceImpl brandService,
                            BrandRepository brandRepository) {
         this.brandService = brandService;
