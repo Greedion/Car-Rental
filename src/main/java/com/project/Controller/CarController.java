@@ -80,7 +80,7 @@ public class CarController {
     @ApiOperation(value = "Update car.", notes = "Needed authorization from Admin account")
     @PutMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<?> updateCar(@RequestBody CarDTO inputCarDTO, BindingResult result) throws ServiceOperationException {
+    ResponseEntity<?> updateCar(@Valid @RequestBody CarDTO inputCarDTO, BindingResult result) throws ServiceOperationException {
         if (inputCarDTO == null) {
             logger.error("Attempt update car with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update car with empty input data.");
@@ -115,7 +115,6 @@ public class CarController {
 
     private Map<String, String> hadErrors(BindingResult result) {
         Map<String, String> errorMap = new HashMap<>();
-
         for (FieldError error : result.getFieldErrors()
         ) {
             errorMap.put(error.getField(), error.getDefaultMessage());
