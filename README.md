@@ -43,32 +43,7 @@
  ## User/User
  # Api Endpoints: 
 > Default adress: http://localhost:8080/api
-## Access for everyone
-### Authorization
-- POST: /auth/signin 
-### Create account
-- POST /user/createaccount
-### Get brand/s
-- GET /brand
-- GET /brand/{id}
-### Get car/s
-- GET /car
-- GET /car/{id}
-## Access for user
-- GET /loan
-- POST /loan/createreservation
-- POST /user/moneytransfer
-## Access for admin
-- POST /brand
-- PUT /brand
-- DELETE /brand/{id}
-- POST /car
-- PUT /car
-- DELETE /car/{id}
-- GET /loan
-- POST /loan/createreservation
-- POST /user/moneytransfer
-- GET /user
+## Swagger UI : [Go to Swagger UI](http://localhost:8080/swagger-ui.html)
 
 
 
