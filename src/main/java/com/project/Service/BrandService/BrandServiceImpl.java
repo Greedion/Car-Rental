@@ -1,12 +1,18 @@
 package com.project.Service.BrandService;
 import com.project.DataTransferObject.BrandDTO;
 import com.project.Entity.BrandEntity;
+import com.project.Exception.GlobalExceptionHandler;
+import com.project.Exception.ServiceOperationException;
 import com.project.Repository.BrandRepository;
+import com.project.Repository.CarRepository;
 import com.project.Utils.BrandMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +22,10 @@ public class BrandServiceImpl implements BrandInterface {
 
     private final Logger logger = LoggerFactory.getLogger(BrandServiceImpl.class);
     private final BrandRepository brandRepository;
-
-    public BrandServiceImpl(BrandRepository brandRepository) {
+    private final CarRepository carRepository;
+    public BrandServiceImpl(BrandRepository brandRepository, CarRepository carRepository) {
         this.brandRepository = brandRepository;
+        this.carRepository = carRepository;
     }
 
     public ResponseEntity<List<BrandDTO>> getAllBrands() {
@@ -65,16 +72,31 @@ public class BrandServiceImpl implements BrandInterface {
         return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<?> deleteByID(String id) {
+    public ResponseEntity<?> deleteByID(String id) throws ServiceOperationException {
         if (brandRepository.existsById(Long.parseLong(id))) {
             Optional<BrandEntity> brandObject = brandRepository.findById(Long.parseLong(id));
             if (brandObject.isPresent()) {
-                brandRepository.delete(brandObject.get());
-                return ResponseEntity.ok().build();
+                if(checkConstraintsOfIntegrityForBrand(Long.parseLong(id))) {
+                    brandRepository.delete(brandObject.get());
+                    return ResponseEntity.ok().build();
+                }else{
+                    logger.error("Attempt remove brand with assigned binding.");
+
+                    throw new ResponseStatusException(HttpStatus.CONFLICT,
+                            "Attempt remove brand with assigned binding.");
+                }
             }
         }
         logger.error("Attempt to delete the brand using a non-existent id");
         return ResponseEntity.badRequest().build();
+    }
+
+    boolean checkConstraintsOfIntegrityForBrand(Long id) {
+        if (brandRepository.existsById(id)) {
+            BrandEntity brand = brandRepository.getOne(id);
+            return !carRepository.existsByBrand(brand);
+        }
+        return true;
     }
 
 }

@@ -4,6 +4,7 @@ import com.project.DataTransferObject.CarDTO;
 import com.project.Exception.ServiceOperationException;
 import com.project.Repository.CarRepository;
 import com.project.Service.CarService.CarServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,11 +34,13 @@ public class CarController {
         this.carRepository = carRepository;
     }
 
+    @ApiOperation(value = "Get all cars.")
     @GetMapping(produces = "application/json")
     ResponseEntity<List<CarDTO>> getAllCars() {
         return carService.getAllCars();
     }
 
+    @ApiOperation(value = "Get a single car by id.")
     @GetMapping(value = "/{id}", produces = "application/json")
     ResponseEntity<CarDTO> getOneByID(@PathVariable String id) {
         if(id == null)
@@ -57,6 +60,7 @@ public class CarController {
         }
     }
 
+    @ApiOperation(value = "Add car.", notes = "Needed authorization from Admin account")
     @PostMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> addCar(@Valid @RequestBody CarDTO inputCarDTO, BindingResult result) throws ServiceOperationException {
@@ -73,6 +77,7 @@ public class CarController {
             return carService.addCar(inputCarDTO);
     }
 
+    @ApiOperation(value = "Update car.", notes = "Needed authorization from Admin account")
     @PutMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> updateCar(@RequestBody CarDTO inputCarDTO, BindingResult result) throws ServiceOperationException {
@@ -92,6 +97,7 @@ public class CarController {
             return carService.modifyCar(inputCarDTO);
     }
 
+    @ApiOperation(value = "Delete car.", notes = "Needed authorization from Admin account")
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> deleteByID(@PathVariable String id) {
