@@ -4,14 +4,19 @@ import com.project.Security.JWTAuth.JwtUtils;
 import com.project.Service.AuthService.AuthServiceImpl;
 import com.project.POJO.POJOUser;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -33,13 +38,23 @@ public class AuthController {
 
     @ApiOperation(value = "Log in.", notes = "Default account's : Admin/Admin User/User")
     @PostMapping("/signin")
-    ResponseEntity<?> login(@RequestBody POJOUser pojoUser) {
+    ResponseEntity<?> login(@Valid @RequestBody POJOUser pojoUser, BindingResult result) {
         if(pojoUser==null){
-            logger.error("Attempt login with empty input data.");
+            logger.error("Attempt sing in with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt login with empty input data");
+        }else if (result.hasErrors()) {
+            logger.error("Attempt to sing in with wrong data structure.");
+            return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
         return authService.start(pojoUser, authenticationManager);
     }
 
-
+    private Map<String, String> hadErrors(BindingResult result) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : result.getFieldErrors()
+        ) {
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        }
+        return errorMap;
+    }
 }

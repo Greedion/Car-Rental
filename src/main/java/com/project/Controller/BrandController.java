@@ -120,7 +120,6 @@ public class BrandController {
 
     private Map<String, String> hadErrors(BindingResult result) {
         Map<String, String> errorMap = new HashMap<>();
-
         for (FieldError error : result.getFieldErrors()
         ) {
             errorMap.put(error.getField(), error.getDefaultMessage());
