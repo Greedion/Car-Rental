@@ -1,8 +1,8 @@
-package com.project.Controller;
+package com.project.controller;
 
-import com.project.Exception.ServiceOperationException;
-import com.project.Model.LoanModel;
-import com.project.Service.RentalService.RentalServiceImpl;
+import com.project.exception.ServiceOperationException;
+import com.project.model.Loan;
+import com.project.service.rentalservice.RentalServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +34,13 @@ public class RentalController {
     @ApiOperation(value = "Create reservation for singe car.", notes = "Needed authentication")
     @PostMapping(value = "createreservation", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    ResponseEntity<?> rentalAttempt(@RequestBody @Valid LoanModel loanModel, HttpServletRequest httpServletRequest, BindingResult result) throws ServiceOperationException {
-        if (loanModel == null) {
+    public ResponseEntity<?> rentalAttempt(@RequestBody @Valid Loan loan, HttpServletRequest httpServletRequest, BindingResult result) throws ServiceOperationException {
+        if (loan == null) {
             logger.error("Attempt update brand with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update brand with empty input data.");
-        } else if (loanModel.getStartOfLoan() == null ||
-                loanModel.getEndOfLoan() == null ||
-                loanModel.getCarID() == null) {
+        } else if (loan.getStartOfLoan() == null ||
+                loan.getEndOfLoan() == null ||
+                loan.getCarID() == null) {
             logger.error("Attempt rental car with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt rental car with empty input data.");
         } else if (result.hasErrors()) {
@@ -52,7 +52,7 @@ public class RentalController {
                 logger.error("Attempt to create reservation with outdated login token. Or user doesn't exist.");
                 return ResponseEntity.badRequest().build();
             }
-            return rentalService.rentalAttempt(loanModel, username);
+            return rentalService.rentalAttempt(loan, username);
         }
     }
 

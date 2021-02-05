@@ -1,7 +1,6 @@
-package com.project.Repository;
+package com.project.repository;
 
-import com.project.Entity.UserEntity;
-import com.project.Entity.UserRoleEntity;
+import com.project.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +11,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByUsername(String username);
 
-    Boolean existsByUsernameAndRole(String username, UserRoleEntity roleEntity);
 }

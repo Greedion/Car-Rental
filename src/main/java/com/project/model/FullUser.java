@@ -1,4 +1,4 @@
-package com.project.DataTransferObject;
+package com.project.model;
 import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserDTO implements Serializable {
+public class FullUser implements Serializable {
     @Pattern(regexp = "^[0-9]*$", message = "Accept only digits")
     private String id;
 

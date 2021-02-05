@@ -1,9 +1,9 @@
-package com.project.Controller;
+package com.project.controller;
 
-import com.project.DataTransferObject.UserDTO;
-import com.project.Exception.ServiceOperationException;
-import com.project.Service.UserService.UserServiceImpl;
-import com.project.POJO.POJOUser;
+import com.project.model.FullUser;
+import com.project.exception.ServiceOperationException;
+import com.project.service.userservice.UserServiceImpl;
+import com.project.model.User;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class UserController {
     @ApiOperation(value = "Transfer money to account.", notes = "Needed authentication")
     @PostMapping(value = "/moneytransfer", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    ResponseEntity<?> moneyTransfer(String inputMoney, HttpServletRequest httpServletRequest) throws ServiceOperationException {
+    public ResponseEntity<?> moneyTransfer(String inputMoney, HttpServletRequest httpServletRequest) throws ServiceOperationException {
         if(inputMoney == null){
             logger.error("Attempt did money transfer with empty inputMoney value.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt did money transfer with empty inputMoney value.");
@@ -53,18 +53,18 @@ public class UserController {
     @ApiOperation(value = "Get all users.", notes = "Needed authorization from Admin account")
     @GetMapping(produces = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<FullUser>> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @ApiOperation(value = "Create account.")
     @PostMapping(value = "/createaccount", produces = "application/json", consumes = "application/json")
-    ResponseEntity<?> createAccount(@Valid @RequestBody POJOUser pojoUser, BindingResult result) {
+    public ResponseEntity<?> createAccount(@Valid @RequestBody User user, BindingResult result) {
 
-        if (pojoUser == null) {
+        if (user == null) {
             logger.error("Attempt create account with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create account with empty input data.");
-        } else if (pojoUser.getUsername() == null || pojoUser.getPassword() == null) {
+        } else if (user.getUsername() == null || user.getPassword() == null) {
             logger.error("Attempt create account with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create account with empty input data.");
         } else {
@@ -72,7 +72,7 @@ public class UserController {
                 logger.error("Attempt to create account with wrong data structure.");
                 return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
             }else{
-                return userService.createAccount(pojoUser);
+                return userService.createAccount(user);
             }
         }
     }

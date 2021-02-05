@@ -1,13 +1,13 @@
-package com.project.Service.UserService;
+package com.project.service.userservice;
 
-import com.project.DataTransferObject.UserDTO;
-import com.project.Entity.UserEntity;
-import com.project.Entity.UserRoleEntity;
-import com.project.Exception.ServiceOperationException;
-import com.project.Repository.UserRepository;
-import com.project.Repository.UserRoleRepository;
-import com.project.POJO.POJOUser;
-import com.project.Utils.UserMapper;
+import com.project.model.FullUser;
+import com.project.entity.UserEntity;
+import com.project.entity.UserRoleEntity;
+import com.project.exception.ServiceOperationException;
+import com.project.repository.UserRepository;
+import com.project.repository.UserRoleRepository;
+import com.project.model.User;
+import com.project.utils.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -52,16 +52,16 @@ public class UserServiceImpl implements UserInterface {
         }
     }
 
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<FullUser>> getAllUsers() {
         List<UserEntity> allUserEntities = userRepository.findAll();
-        List<UserDTO> returnObject = new ArrayList<>();
+        List<FullUser> returnObject = new ArrayList<>();
         for (UserEntity x : allUserEntities) {
             returnObject.add(UserMapper.mapperFormUserEntityToUserDTA(x));
         }
         return ResponseEntity.ok(returnObject);
     }
 
-    public ResponseEntity<?> createAccount(POJOUser inputUser) {
+    public ResponseEntity<?> createAccount(User inputUser) {
         Optional<UserRoleEntity> userRole = Optional.ofNullable(userRoleRepository.findByRole(DEFAULT_USER_ROLE));
         if (userRole.isPresent() && !userRepository.existsByUsername(inputUser.getUsername())) {
             UserEntity user = new UserEntity(inputUser.getUsername(), passwordEncoder.encode(inputUser.getPassword()), userRole.get(), BigDecimal.valueOf(0L));

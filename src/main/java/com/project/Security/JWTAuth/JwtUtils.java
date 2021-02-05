@@ -1,6 +1,6 @@
-package com.project.Security.JWTAuth;
+package com.project.security.jwtauth;
 
-import com.project.Entity.UserEntity;
+import com.project.entity.UserEntity;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

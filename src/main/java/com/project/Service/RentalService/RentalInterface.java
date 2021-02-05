@@ -1,12 +1,13 @@
-package com.project.Service.RentalService;
-import com.project.Exception.ServiceOperationException;
-import com.project.Model.LoanModel;
+package com.project.service.rentalservice;
+
+import com.project.exception.ServiceOperationException;
+import com.project.model.Loan;
 import org.springframework.http.ResponseEntity;
 
 import java.text.ParseException;
 
 public interface RentalInterface {
 
-    ResponseEntity<?> rentalAttempt(LoanModel inputLoanModel, String username) throws ParseException, ServiceOperationException;
+    ResponseEntity<?> rentalAttempt(Loan inputLoan, String username) throws ParseException, ServiceOperationException;
 
 }

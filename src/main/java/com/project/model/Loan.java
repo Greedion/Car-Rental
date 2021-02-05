@@ -1,4 +1,4 @@
-package com.project.Model;
+package com.project.model;
 import lombok.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -6,7 +6,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class LoanModel implements Serializable {
+public class Loan implements Serializable {
 
     @NotEmpty(message = "Car id can't be empty")
     @NotNull(message = "Car id can't be null")

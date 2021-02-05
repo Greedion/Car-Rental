@@ -1,10 +1,8 @@
-package com.project.Controller;
+package com.project.controller;
 
-import com.project.DataTransferObject.LoanDTO;
-import com.project.Service.LoanService.LoanServiceImpl;
+import com.project.model.LoanWithUsername;
+import com.project.service.loanservice.LoanServiceImpl;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +17,6 @@ import java.util.List;
 @RequestMapping("/api/loan")
 public class LoanController {
 
-    private final Logger logger = LoggerFactory.getLogger(LoanController.class);
     private final LoanServiceImpl loanService;
 
     public LoanController(LoanServiceImpl loanService) {
@@ -29,7 +26,7 @@ public class LoanController {
     @ApiOperation(value = "Get all loans.", notes = "Needed authentication.")
     @GetMapping(produces = "application/json")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    ResponseEntity<List<LoanDTO>> getAllLoan() {
+    public ResponseEntity<List<LoanWithUsername>> getAllLoan() {
         return loanService.getAllLoans();
     }
 }

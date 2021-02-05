@@ -1,4 +1,4 @@
-package com.project.Security.JWTAuth;
+package com.project.security.jwtauth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

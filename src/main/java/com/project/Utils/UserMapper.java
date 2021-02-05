@@ -1,11 +1,13 @@
-package com.project.Utils;
-import com.project.DataTransferObject.UserDTO;
-import com.project.Entity.UserEntity;
+package com.project.utils;
+
+import com.project.model.FullUser;
+import com.project.entity.UserEntity;
 
 public class UserMapper {
 
-    public static UserDTO mapperFormUserEntityToUserDTA(UserEntity inputUserEntity){
-        return new UserDTO(String.valueOf(inputUserEntity.getId()),
+    private UserMapper(){}
+    public static FullUser mapperFormUserEntityToUserDTA(UserEntity inputUserEntity){
+        return new FullUser(String.valueOf(inputUserEntity.getId()),
                 inputUserEntity.getUsername(),
                 null, inputUserEntity.getRole().getRole(),
                 inputUserEntity.getMoneyOnTheAccount().toString());

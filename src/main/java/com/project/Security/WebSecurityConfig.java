@@ -1,12 +1,12 @@
-package com.project.Security;
+package com.project.security;
 
-import com.project.Entity.UserEntity;
-import com.project.Entity.UserRoleEntity;
-import com.project.Security.JWTAuth.AuthEntryPointJwt;
-import com.project.Security.JWTAuth.JWTFilter;
-import com.project.Repository.UserRepository;
-import com.project.Repository.UserRoleRepository;
-import com.project.Security.JWTAuth.JwtUtils;
+import com.project.entity.UserEntity;
+import com.project.entity.UserRoleEntity;
+import com.project.security.jwtauth.AuthEntryPointJwt;
+import com.project.security.jwtauth.JWTFilter;
+import com.project.repository.UserRepository;
+import com.project.repository.UserRoleRepository;
+import com.project.security.jwtauth.JwtUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

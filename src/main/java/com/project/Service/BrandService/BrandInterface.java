@@ -1,19 +1,21 @@
-package com.project.Service.BrandService;
-import com.project.DataTransferObject.BrandDTO;
-import com.project.Exception.ServiceOperationException;
+package com.project.service.brandservice;
+
+import com.project.model.Brand;
+import com.project.exception.ServiceOperationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface BrandInterface {
 
-    ResponseEntity<List<BrandDTO>> getAllBrands();
+    ResponseEntity<List<Brand>> getAllBrands();
 
-    ResponseEntity<?> addBrand(BrandDTO inputBrandDTO);
+    ResponseEntity<?> addBrand(Brand inputBrand);
 
-    ResponseEntity<?> modifyBrand(BrandDTO inputBrandDTO);
+    ResponseEntity<?> modifyBrand(Brand inputBrand);
 
-    ResponseEntity<BrandDTO> getOneByID(String id);
+    ResponseEntity<Brand> getOneByID(String id);
 
-    ResponseEntity<?> deleteByID(String id) throws ServiceOperationException;
+    ResponseEntity<HttpStatus> deleteByID(String id) throws ServiceOperationException;
 }

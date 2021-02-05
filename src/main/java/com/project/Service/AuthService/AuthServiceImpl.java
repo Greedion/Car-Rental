@@ -1,10 +1,10 @@
-package com.project.Service.AuthService;
+package com.project.service.authservice;
 
-import com.project.Entity.UserEntity;
-import com.project.Payload.JwtResponse;
-import com.project.Repository.UserRepository;
-import com.project.POJO.POJOUser;
-import com.project.Security.JWTAuth.JwtUtils;
+import com.project.entity.UserEntity;
+import com.project.model.JwtResponse;
+import com.project.repository.UserRepository;
+import com.project.model.User;
+import com.project.security.jwtauth.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -35,25 +35,24 @@ public class AuthServiceImpl implements AuthInterface {
         this.jwtUtils = jwtUtils;
     }
 
-    private Boolean checkAccountExist(POJOUser pojoUser) {
-        return userRepository.existsByUsername(pojoUser.getUsername());
+    private boolean checkAccountExist(User user) {
+        return userRepository.existsByUsername(user.getUsername());
     }
 
-    private UserEntity returnAccount(POJOUser pojoUser) {
-        return userRepository.findByUsername(pojoUser.getUsername());
+    private UserEntity returnAccount(User user) {
+        return userRepository.findByUsername(user.getUsername());
     }
 
-    private Boolean checkCredentials(POJOUser pojoUser) {
-        UserEntity account = returnAccount(pojoUser);
-        return passwordEncoder.matches(pojoUser.getPassword(), account.getPassword());
+    private boolean checkCredentials(User user) {
+        UserEntity account = returnAccount(user);
+        return passwordEncoder.matches(user.getPassword(), account.getPassword());
     }
 
     @Override
-    public ResponseEntity<?> start(POJOUser pojoUser, AuthenticationManager authenticationManager) {
-        if (checkAccountExist(pojoUser)) {
-            if (checkCredentials(pojoUser)) {
+    public ResponseEntity<JwtResponse> start(User user, AuthenticationManager authenticationManager) {
+        if (checkAccountExist(user) && checkCredentials(user)) {
                 Authentication authentication = authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(pojoUser.getUsername(), pojoUser.getPassword()));
+                        new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String jwt = jwtUtils.generateJwtToken(authentication);
                 UserEntity userDetails = (UserEntity) authentication.getPrincipal();
@@ -65,7 +64,7 @@ public class AuthServiceImpl implements AuthInterface {
                         userDetails.getUsername(),
                         roles));
             }
-        }
+
         logger.error("Received incorrect logging data.");
         return ResponseEntity.badRequest().build();
     }

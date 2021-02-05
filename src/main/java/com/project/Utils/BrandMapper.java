@@ -1,16 +1,19 @@
-package com.project.Utils;
-import com.project.Entity.BrandEntity;
-import com.project.DataTransferObject.BrandDTO;
+package com.project.utils;
+
+import com.project.entity.BrandEntity;
+import com.project.model.Brand;
 
 public class BrandMapper {
 
-    public static BrandEntity mapperFromBrandDTAToBrandEntity(BrandDTO inputBrandDTO) {
-        if (inputBrandDTO.getId() != null && !inputBrandDTO.getId().equals(""))
-            return new BrandEntity(Long.parseLong(inputBrandDTO.getId()), inputBrandDTO.getBrand());
-        else return new BrandEntity(null, inputBrandDTO.getBrand());
+    private BrandMapper(){}
+
+    public static BrandEntity mapperFromBrandDTAToBrandEntity(Brand inputBrand) {
+        if (inputBrand.getId() != null && !inputBrand.getId().equals(""))
+            return new BrandEntity(Long.parseLong(inputBrand.getId()), inputBrand.getBrand());
+        else return new BrandEntity(null, inputBrand.getBrand());
     }
 
-    public static BrandDTO mapperFromBrandEntityToBrandDTA(BrandEntity inputBrandEntity) {
-        return new BrandDTO(String.valueOf(inputBrandEntity.getId()), inputBrandEntity.getBrand());
+    public static Brand mapperFromBrandEntityToBrandDTA(BrandEntity inputBrandEntity) {
+        return new Brand(String.valueOf(inputBrandEntity.getId()), inputBrandEntity.getBrand());
     }
 }

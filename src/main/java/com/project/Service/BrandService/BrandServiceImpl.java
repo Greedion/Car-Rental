@@ -1,11 +1,10 @@
-package com.project.Service.BrandService;
-import com.project.DataTransferObject.BrandDTO;
-import com.project.Entity.BrandEntity;
-import com.project.Exception.GlobalExceptionHandler;
-import com.project.Exception.ServiceOperationException;
-import com.project.Repository.BrandRepository;
-import com.project.Repository.CarRepository;
-import com.project.Utils.BrandMapper;
+package com.project.service.brandservice;
+import com.project.model.Brand;
+import com.project.entity.BrandEntity;
+import com.project.exception.ServiceOperationException;
+import com.project.repository.BrandRepository;
+import com.project.repository.CarRepository;
+import com.project.utils.BrandMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,9 +27,9 @@ public class BrandServiceImpl implements BrandInterface {
         this.carRepository = carRepository;
     }
 
-    public ResponseEntity<List<BrandDTO>> getAllBrands() {
+    public ResponseEntity<List<Brand>> getAllBrands() {
         List<BrandEntity> brandsFromDatabase = brandRepository.findAll();
-        List<BrandDTO> brandsDTA = new ArrayList<>();
+        List<Brand> brandsDTA = new ArrayList<>();
 
         for (BrandEntity x : brandsFromDatabase
         ) {
@@ -39,19 +38,19 @@ public class BrandServiceImpl implements BrandInterface {
         return ResponseEntity.ok(brandsDTA);
     }
 
-    public ResponseEntity<?> addBrand(BrandDTO inputBrandDTO) {
-        BrandEntity brandForSave = BrandMapper.mapperFromBrandDTAToBrandEntity(inputBrandDTO);
+    public ResponseEntity<?> addBrand(Brand inputBrand) {
+        BrandEntity brandForSave = BrandMapper.mapperFromBrandDTAToBrandEntity(inputBrand);
         brandRepository.save(brandForSave);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> modifyBrand(BrandDTO inputBrandDTO) {
-        if (brandRepository.existsById(Long.parseLong(inputBrandDTO.getId()))) {
-            Optional<BrandEntity> brandForSave = brandRepository.findById(Long.parseLong(inputBrandDTO.getId()));
+    public ResponseEntity<?> modifyBrand(Brand inputBrand) {
+        if (brandRepository.existsById(Long.parseLong(inputBrand.getId()))) {
+            Optional<BrandEntity> brandForSave = brandRepository.findById(Long.parseLong(inputBrand.getId()));
             if (brandForSave.isPresent()) {
-                if (inputBrandDTO.getBrand() != null && !inputBrandDTO.getBrand().equals("")) {
-                    if (!inputBrandDTO.getBrand().equals(brandForSave.get().getBrand())) {
-                        brandForSave.get().setBrand(inputBrandDTO.getBrand());
+                if (inputBrand.getBrand() != null && !inputBrand.getBrand().equals("")) {
+                    if (!inputBrand.getBrand().equals(brandForSave.get().getBrand())) {
+                        brandForSave.get().setBrand(inputBrand.getBrand());
                         brandRepository.save(brandForSave.get());
                         return ResponseEntity.ok().build();
                     }
@@ -62,7 +61,7 @@ public class BrandServiceImpl implements BrandInterface {
         return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<BrandDTO> getOneByID(String id) {
+    public ResponseEntity<Brand> getOneByID(String id) {
         if (brandRepository.existsById(Long.parseLong(id))) {
             Optional<BrandEntity> brandObject = brandRepository.findById(Long.parseLong(id));
             if (brandObject.isPresent())
@@ -72,7 +71,7 @@ public class BrandServiceImpl implements BrandInterface {
         return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<?> deleteByID(String id) throws ServiceOperationException {
+    public ResponseEntity<HttpStatus> deleteByID(String id) throws ServiceOperationException {
         if (brandRepository.existsById(Long.parseLong(id))) {
             Optional<BrandEntity> brandObject = brandRepository.findById(Long.parseLong(id));
             if (brandObject.isPresent()) {

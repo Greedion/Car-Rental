@@ -1,9 +1,9 @@
-package com.project.Controller;
+package com.project.controller;
 
-import com.project.DataTransferObject.CarDTO;
-import com.project.Exception.ServiceOperationException;
-import com.project.Repository.CarRepository;
-import com.project.Service.CarService.CarServiceImpl;
+import com.project.model.Car;
+import com.project.exception.ServiceOperationException;
+import com.project.repository.CarRepository;
+import com.project.service.carservice.CarServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +36,13 @@ public class CarController {
 
     @ApiOperation(value = "Get all cars.")
     @GetMapping(produces = "application/json")
-    ResponseEntity<List<CarDTO>> getAllCars() {
+    public ResponseEntity<List<Car>> getAllCars() {
         return carService.getAllCars();
     }
 
     @ApiOperation(value = "Get a single car by id.")
     @GetMapping(value = "/{id}", produces = "application/json")
-    ResponseEntity<CarDTO> getOneByID(@PathVariable String id) {
+    public ResponseEntity<Car> getOneByID(@PathVariable String id) {
         if(id == null)
         {
             logger.error("Attempt get car with empty input data.");
@@ -63,44 +63,44 @@ public class CarController {
     @ApiOperation(value = "Add car.", notes = "Needed authorization from Admin account")
     @PostMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<?> addCar(@Valid @RequestBody CarDTO inputCarDTO, BindingResult result) throws ServiceOperationException {
-        if (inputCarDTO == null) {
+    public ResponseEntity<?> addCar(@Valid @RequestBody Car inputCar, BindingResult result) throws ServiceOperationException {
+        if (inputCar == null) {
             logger.error("Attempt adding car with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt adding car with empty input data.");
-        } else if (inputCarDTO.getBrand() == null || inputCarDTO.getDescription() == null || inputCarDTO.getPricePerHour() == null) {
+        } else if (inputCar.getBrand() == null || inputCar.getDescription() == null || inputCar.getPricePerHour() == null) {
             logger.error("Attempt adding car with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt adding car with empty input data.");
         } else if (result.hasErrors()) {
             logger.error("Attempt to add Car with wrong data structure.");
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         } else
-            return carService.addCar(inputCarDTO);
+            return carService.addCar(inputCar);
     }
 
     @ApiOperation(value = "Update car.", notes = "Needed authorization from Admin account")
     @PutMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<?> updateCar(@Valid @RequestBody CarDTO inputCarDTO, BindingResult result) throws ServiceOperationException {
-        if (inputCarDTO == null) {
+    public ResponseEntity<?> updateCar(@Valid @RequestBody Car inputCar, BindingResult result) throws ServiceOperationException {
+        if (inputCar == null) {
             logger.error("Attempt update car with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update car with empty input data.");
-        } else if (inputCarDTO.getBrand() == null ||
-                inputCarDTO.getDescription() == null ||
-                inputCarDTO.getPricePerHour() == null ||
-                inputCarDTO.getId() == null) {
+        } else if (inputCar.getBrand() == null ||
+                inputCar.getDescription() == null ||
+                inputCar.getPricePerHour() == null ||
+                inputCar.getId() == null) {
             logger.error("Attempt update car with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update car with empty input data.");
         } else if (result.hasErrors()) {
             logger.error("Attempt to update Car with wrong data structure.");
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         } else
-            return carService.modifyCar(inputCarDTO);
+            return carService.modifyCar(inputCar);
     }
 
     @ApiOperation(value = "Delete car.", notes = "Needed authorization from Admin account")
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<?> deleteByID(@PathVariable String id) {
+    public ResponseEntity<HttpStatus> deleteByID(@PathVariable String id) {
         try {
             if (carRepository.existsById(Long.parseLong(id))) {
                 return carService.deleteByID(id);

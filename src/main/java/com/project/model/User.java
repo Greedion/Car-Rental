@@ -1,4 +1,4 @@
-package com.project.POJO;
+package com.project.model;
 import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class POJOUser implements Serializable {
+public class User implements Serializable {
 
     @NotNull(message = "Username can't be null")
     @NotEmpty(message = "Username can't be empty")

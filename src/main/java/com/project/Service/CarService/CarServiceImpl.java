@@ -1,14 +1,15 @@
-package com.project.Service.CarService;
+package com.project.service.carservice;
 
-import com.project.DataTransferObject.CarDTO;
-import com.project.Entity.BrandEntity;
-import com.project.Entity.CarEntity;
-import com.project.Exception.ServiceOperationException;
-import com.project.Repository.BrandRepository;
-import com.project.Repository.CarRepository;
-import com.project.Utils.CarMapper;
+import com.project.model.Car;
+import com.project.entity.BrandEntity;
+import com.project.entity.CarEntity;
+import com.project.exception.ServiceOperationException;
+import com.project.repository.BrandRepository;
+import com.project.repository.CarRepository;
+import com.project.utils.CarMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ import java.util.Optional;
 public class CarServiceImpl implements CarInterface {
 
     private final Logger logger = LoggerFactory.getLogger(CarServiceImpl.class);
-    private final static String EXCEPTION_ALERT = "Wrong input data format Exception";
+    private static final String EXCEPTION_ALERT = "Wrong input data format Exception";
 
     private final CarRepository carRepository;
     private final BrandRepository brandRepository;
@@ -33,9 +34,9 @@ public class CarServiceImpl implements CarInterface {
         this.carMapper = carMapper;
     }
 
-    public ResponseEntity<List<CarDTO>> getAllCars() {
+    public ResponseEntity<List<Car>> getAllCars() {
         List<CarEntity> carsFromDatabase = carRepository.findAll();
-        List<CarDTO> carsDTA = new ArrayList<>();
+        List<Car> carsDTA = new ArrayList<>();
 
         for (CarEntity x : carsFromDatabase
         ) {
@@ -44,9 +45,9 @@ public class CarServiceImpl implements CarInterface {
         return ResponseEntity.ok(carsDTA);
     }
 
-    public ResponseEntity<?> addCar(CarDTO inputCarDTO) throws ServiceOperationException {
+    public ResponseEntity<?> addCar(Car inputCar) throws ServiceOperationException {
         try {
-            CarEntity carEntity = carMapper.mapperFromCarDTOToCarEntity(inputCarDTO);
+            CarEntity carEntity = carMapper.mapperFromCarDTOToCarEntity(inputCar);
 
         if (carEntity != null) {
             carRepository.save(carEntity);
@@ -58,24 +59,24 @@ public class CarServiceImpl implements CarInterface {
         }
     }
 
-    public ResponseEntity<?> modifyCar(CarDTO inputCarDTO) throws ServiceOperationException {
-            if (carRepository.existsById(Long.parseLong(inputCarDTO.getId()))) {
-                Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(inputCarDTO.getId()));
+    public ResponseEntity<?> modifyCar(Car inputCar) throws ServiceOperationException {
+            if (carRepository.existsById(Long.parseLong(inputCar.getId()))) {
+                Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(inputCar.getId()));
                 if (carEntity.isPresent()) {
                     try {
-                        if (Long.parseLong(inputCarDTO.getBrand()) != carEntity.get().getBrand().getId()) {
-                            Optional<BrandEntity> newBrand = brandRepository.findById(Long.parseLong(inputCarDTO.getBrand()));
+                        if (Long.parseLong(inputCar.getBrand()) != carEntity.get().getBrand().getId()) {
+                            Optional<BrandEntity> newBrand = brandRepository.findById(Long.parseLong(inputCar.getBrand()));
                             newBrand.ifPresent(brandEntity -> carEntity.get().setBrand(brandEntity));
                             if (!newBrand.isPresent())
                                 return ResponseEntity.badRequest().build();
                         }
-                        if (inputCarDTO.getDescription() != null && !inputCarDTO.getDescription().equals("")) {
-                            if (!carEntity.get().getDescription().equals(inputCarDTO.getDescription()))
-                                carEntity.get().setDescription(inputCarDTO.getDescription());
+                        if (inputCar.getDescription() != null && !inputCar.getDescription().equals("")) {
+                            if (!carEntity.get().getDescription().equals(inputCar.getDescription()))
+                                carEntity.get().setDescription(inputCar.getDescription());
                         }
-                        if (inputCarDTO.getPricePerHour() != null && !inputCarDTO.getPricePerHour().equals("")) {
-                            if (!carEntity.get().getPricePerHour().equals(Double.parseDouble(inputCarDTO.getPricePerHour())))
-                                carEntity.get().setPricePerHour(Double.parseDouble(inputCarDTO.getPricePerHour()));
+                        if (inputCar.getPricePerHour() != null && !inputCar.getPricePerHour().equals("")) {
+                            if (!carEntity.get().getPricePerHour().equals(Double.parseDouble(inputCar.getPricePerHour())))
+                                carEntity.get().setPricePerHour(Double.parseDouble(inputCar.getPricePerHour()));
                         }
                     } catch (NumberFormatException e) {
                         logger.error("Attempt parse id / brand from String to Long.");
@@ -93,7 +94,7 @@ public class CarServiceImpl implements CarInterface {
             }
     }
 
-    public ResponseEntity<CarDTO> getOneByID(String id) {
+    public ResponseEntity<Car> getOneByID(String id) {
         if (carRepository.existsById(Long.parseLong(id))) {
             Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(id));
             if (carEntity.isPresent()) {
@@ -104,7 +105,7 @@ public class CarServiceImpl implements CarInterface {
         return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<?> deleteByID(String id) {
+    public ResponseEntity<HttpStatus> deleteByID(String id) {
         if (carRepository.existsById(Long.parseLong(id))) {
             Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(id));
             if (carEntity.isPresent()) {

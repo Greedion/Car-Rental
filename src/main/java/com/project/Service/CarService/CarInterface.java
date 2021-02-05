@@ -1,19 +1,21 @@
-package com.project.Service.CarService;
-import com.project.DataTransferObject.CarDTO;
-import com.project.Exception.ServiceOperationException;
+package com.project.service.carservice;
+
+import com.project.model.Car;
+import com.project.exception.ServiceOperationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import javax.servlet.ServletException;
 import java.util.List;
 
 public interface CarInterface {
 
-    ResponseEntity<List<CarDTO>> getAllCars();
+    ResponseEntity<List<Car>> getAllCars();
 
-    ResponseEntity<?> addCar(CarDTO inputCarDTO) throws ServletException, ServiceOperationException;
+    ResponseEntity<?> addCar(Car inputCar) throws ServletException, ServiceOperationException;
 
-    ResponseEntity<?> modifyCar(CarDTO inputCarDTO) throws ServletException, ServiceOperationException;
+    ResponseEntity<?> modifyCar(Car inputCar) throws ServletException, ServiceOperationException;
 
-    ResponseEntity<CarDTO> getOneByID(String id);
+    ResponseEntity<Car> getOneByID(String id);
 
-    ResponseEntity<?> deleteByID(String id);
+    ResponseEntity<HttpStatus> deleteByID(String id);
 }

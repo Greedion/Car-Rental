@@ -1,4 +1,4 @@
-package com.project.Entity;
+package com.project.entity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

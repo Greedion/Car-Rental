@@ -1,12 +1,9 @@
-package com.project.Controller;
+package com.project.controller;
 
-import com.project.DataTransferObject.BrandDTO;
-import com.project.Entity.BrandEntity;
-import com.project.Exception.GlobalExceptionHandler;
-import com.project.Exception.ServiceOperationException;
-import com.project.Repository.BrandRepository;
-import com.project.Repository.CarRepository;
-import com.project.Service.BrandService.BrandServiceImpl;
+import com.project.model.Brand;
+import com.project.exception.ServiceOperationException;
+import com.project.repository.BrandRepository;
+import com.project.service.brandservice.BrandServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +39,13 @@ public class BrandController {
     @PreAuthorize("permitAll()")
     @ApiOperation(value = "Get all brand.")
     @GetMapping(produces = "application/json")
-    ResponseEntity<List<BrandDTO>> getAll() {
+    public ResponseEntity<List<Brand>> getAll() {
         return brandService.getAllBrands();
     }
 
     @ApiOperation(value = "Get a single brand by id.")
     @GetMapping(value = "/{id}", produces = "application/json")
-    ResponseEntity<BrandDTO> getOneByID(@PathVariable String id) throws ResponseStatusException {
+    public ResponseEntity<Brand> getOneByID(@PathVariable String id) throws ResponseStatusException {
         if (id == null) {
             logger.error("Attempt get brand with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt get brand with empty input data.");
@@ -68,41 +65,41 @@ public class BrandController {
     @ApiOperation(value = "Add brand.", notes = "Needed authorization from Admin account")
     @PostMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTO inputBrandDTO, BindingResult result) {
-        if (inputBrandDTO == null) {
+    public ResponseEntity<?> addBrand(@Valid @RequestBody Brand inputBrand, BindingResult result) {
+        if (inputBrand == null) {
             logger.error("Attempt create brand with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create brand with empty input data.");
-        } else if (inputBrandDTO.getBrand() == null || inputBrandDTO.getId() == null) {
+        } else if (inputBrand.getBrand() == null || inputBrand.getId() == null) {
             logger.error("Attempt update brand with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create brand with empty input data.");
         } else if (result.hasErrors()) {
             logger.error("Attempt to create Brand with wrong data structure.");
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
-        return brandService.addBrand(inputBrandDTO);
+        return brandService.addBrand(inputBrand);
     }
 
     @ApiOperation(value = "Update brand.", notes = "Needed authorization from Admin account")
     @PutMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<?> updateBrand(@Valid @RequestBody BrandDTO inputBrandDTO, BindingResult result) {
-        if (inputBrandDTO == null) {
+    public ResponseEntity<?> updateBrand(@Valid @RequestBody Brand inputBrand, BindingResult result) {
+        if (inputBrand == null) {
             logger.error("Attempt update brand with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update brand with empty input data.");
-        } else if (inputBrandDTO.getBrand() == null || inputBrandDTO.getId() == null) {
+        } else if (inputBrand.getBrand() == null || inputBrand.getId() == null) {
             logger.error("Attempt update brand with empty input data.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update brand with empty input data.");
         } else if (result.hasErrors()) {
             logger.error("Attempt to update Brand with wrong data structure.");
             return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
         }
-        return brandService.modifyBrand(inputBrandDTO);
+        return brandService.modifyBrand(inputBrand);
     }
 
     @ApiOperation(value = "Remove brand.", notes = "Needed authorization from Admin account")
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<?> deleteByID(@PathVariable String id){
+    public ResponseEntity<HttpStatus> deleteByID(@PathVariable String id){
         try {
             if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.deleteByID(id);
@@ -114,7 +111,6 @@ public class BrandController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt parse String to Long.");
         }
     }
-
 
 
     private Map<String, String> hadErrors(BindingResult result) {

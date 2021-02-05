@@ -1,4 +1,4 @@
-package com.project.Exception;
+package com.project.exception;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleUnexpectedException(Exception e, WebRequest request) {

@@ -1,14 +1,8 @@
-package com.project.Security.JWTAuth;
+package com.project.security.jwtauth;
 
-import com.project.Repository.UserRepository;
-import com.project.Repository.UserRoleRepository;
-
-import com.project.Security.UserDetailsServiceImpl;
+import com.project.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

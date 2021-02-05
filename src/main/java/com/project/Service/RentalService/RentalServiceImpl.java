@@ -1,13 +1,13 @@
-package com.project.Service.RentalService;
+package com.project.service.rentalservice;
 
-import com.project.Entity.CarEntity;
-import com.project.Entity.LoanEntity;
-import com.project.Entity.UserEntity;
-import com.project.Exception.ServiceOperationException;
-import com.project.Model.LoanModel;
-import com.project.Repository.CarRepository;
-import com.project.Repository.LoanRepository;
-import com.project.Repository.UserRepository;
+import com.project.entity.CarEntity;
+import com.project.entity.LoanEntity;
+import com.project.entity.UserEntity;
+import com.project.exception.ServiceOperationException;
+import com.project.model.Loan;
+import com.project.repository.CarRepository;
+import com.project.repository.LoanRepository;
+import com.project.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +29,9 @@ public class RentalServiceImpl implements RentalInterface {
     private final LoanRepository loanRepository;
     private final CarRepository carRepository;
 
-    private final static String DATE_FORMAT_EXCEPTION = "Input Data is empty";
-    private final static String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private final static String PARSE_EXCEPTION = "PARSE FROM METHOD HowManyHours Exception";
+    private static final String DATE_FORMAT_EXCEPTION = "Input Data is empty";
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final String PARSE_EXCEPTION = "PARSE FROM METHOD HowManyHours Exception";
 
     public RentalServiceImpl(UserRepository userRepository, LoanRepository loanRepository, CarRepository carRepository) {
         this.userRepository = userRepository;
@@ -39,19 +39,19 @@ public class RentalServiceImpl implements RentalInterface {
         this.carRepository = carRepository;
     }
 
-    public ResponseEntity<?> rentalAttempt(LoanModel inputLoanModel, String username) throws ServiceOperationException {
+    public ResponseEntity<?> rentalAttempt(Loan inputLoan, String username) throws ServiceOperationException {
         try {
             BigDecimal money = getMoney(username);
-            Double carPrice = getCarPricePerHour(inputLoanModel.getCarID());
+            Double carPrice = getCarPricePerHour(inputLoan.getCarID());
             if (money != null && carPrice != null) {
-                long lengthOfTheLoan = countingHowManyHours(inputLoanModel.getStartOfLoan(), inputLoanModel.getEndOfLoan());
+                long lengthOfTheLoan = countingHowManyHours(inputLoan.getStartOfLoan(), inputLoan.getEndOfLoan());
                 MathContext mc = new MathContext(3);
                 BigDecimal price = new BigDecimal(lengthOfTheLoan * carPrice);
                 if (money.subtract(price, mc).compareTo(BigDecimal.ZERO) > 0 &&
-                        timeAreaIsFree(inputLoanModel.getStartOfLoan(), inputLoanModel.getEndOfLoan(), inputLoanModel.getCarID())) {
-                    Optional<CarEntity> car = carRepository.findById(Long.parseLong(inputLoanModel.getCarID()));
+                        timeAreaIsFree(inputLoan.getStartOfLoan(), inputLoan.getEndOfLoan(), inputLoan.getCarID())) {
+                    Optional<CarEntity> car = carRepository.findById(Long.parseLong(inputLoan.getCarID()));
                     if (car.isPresent()) {
-                        if (createReservation(car.get(), inputLoanModel.getStartOfLoan(), inputLoanModel.getEndOfLoan(), username)) {
+                        if (createReservation(car.get(), inputLoan.getStartOfLoan(), inputLoan.getEndOfLoan(), username)) {
                             UserEntity user = userRepository.findByUsername(username);
                             subtractMoney(user, price);
                             return ResponseEntity.ok().build();
@@ -92,9 +92,6 @@ public class RentalServiceImpl implements RentalInterface {
             long diffSeconds = diff / 1000 % 60;
             long diffMinutes = diff / (60 * 1000) % 60;
             long diffHours = diff / (60 * 60 * 1000);
-            System.out.println("Time in seconds: " + diffSeconds + " seconds.");
-            System.out.println("Time in minutes: " + diffMinutes + " minutes.");
-            System.out.println("Time in hours: " + diffHours + " hours.");
             if (diffSeconds == 0 && diffMinutes == 0) return diffHours;
             else return diffHours + 1;
         } else {

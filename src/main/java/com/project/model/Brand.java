@@ -1,4 +1,4 @@
-package com.project.DataTransferObject;
+package com.project.model;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BrandDTO implements Serializable {
+public class Brand implements Serializable {
 
     @Pattern(regexp = "^[0-9]*$", message = "Accept only digits")
     private String id;

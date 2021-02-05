@@ -1,9 +1,9 @@
-package com.project.Service.LoanService;
+package com.project.service.loanservice;
 
-import com.project.DataTransferObject.LoanDTO;
-import com.project.Entity.LoanEntity;
-import com.project.Repository.LoanRepository;
-import com.project.Utils.LoanMapper;
+import com.project.model.LoanWithUsername;
+import com.project.entity.LoanEntity;
+import com.project.repository.LoanRepository;
+import com.project.utils.LoanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ public class LoanServiceImpl implements LoanInterface {
         this.loanRepository = loanRepository;
     }
 
-    public ResponseEntity<List<LoanDTO>> getAllLoans() {
+    public ResponseEntity<List<LoanWithUsername>> getAllLoans() {
         List<LoanEntity> listLoanObjects = loanRepository.findAll();
-        List<LoanDTO> objectForReturn = new ArrayList<>();
+        List<LoanWithUsername> objectForReturn = new ArrayList<>();
         for (LoanEntity x : listLoanObjects
         ) {
             objectForReturn.add(LoanMapper.mapperFromLoanEntityToLoanDTA(x));
