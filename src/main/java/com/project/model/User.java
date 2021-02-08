@@ -1,5 +1,7 @@
 package com.project.model;
 import lombok.*;
+
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -10,13 +12,15 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class User implements Serializable {
 
-    @NotNull(message = "Username can't be null")
-    @NotEmpty(message = "Username can't be empty")
+    @NotBlank(message = "Username cannot be blank.")
+    @NotNull(message = "Username cannot be null.")
+    @NotEmpty(message = "Username cannot be empty.")
     @Size(min = 3, max = 13, message = "Required length 6-13 characters")
     private String username;
 
-    @NotNull(message = "Password can't be null")
-    @NotEmpty(message = "Password can't be empty")
+    @NotBlank(message = "Password cannot be blank.")
+    @NotNull(message = "Password cannot be null.")
+    @NotEmpty(message = "Password cannot be empty.")
     @Size(min = 3, max = 13, message = "Required length 6-13 characters")
     private String password;
 }

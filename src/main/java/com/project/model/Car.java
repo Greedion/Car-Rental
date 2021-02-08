@@ -15,9 +15,11 @@ public class Car implements Serializable {
     @Pattern(regexp = "^[0-9]*$", message = "Accept only digits")
     private String id;
 
+
     @NotNull(message = "Brand can't be null")
     @NotEmpty(message = "Brand can't be empty")
     private String brand;
+
 
     @NotNull(message = "Description can't be null")
     @NotEmpty(message = "Description can't be empty")

@@ -10,6 +10,7 @@ import com.project.repository.LoanRepository;
 import com.project.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,7 @@ public class RentalServiceImpl implements RentalInterface {
         this.carRepository = carRepository;
     }
 
-    public ResponseEntity<?> rentalAttempt(Loan inputLoan, String username) throws ServiceOperationException {
+    public ResponseEntity<HttpStatus> rentalAttempt(Loan inputLoan, String username) {
         try {
             BigDecimal money = getMoney(username);
             Double carPrice = getCarPricePerHour(inputLoan.getCarID());
@@ -76,8 +77,7 @@ public class RentalServiceImpl implements RentalInterface {
 
     private BigDecimal getMoney(String username) {
         if (userRepository.existsByUsername(username)) {
-            UserEntity user = userRepository.findByUsername(username);
-            return user.getMoneyOnTheAccount();
+            return userRepository.findByUsername(username).getMoneyOnTheAccount();
         } else {
             logger.error("Attempt get money value from non-existent username.");
             return null;
@@ -142,12 +142,11 @@ public class RentalServiceImpl implements RentalInterface {
     private boolean createReservation(CarEntity inputCar, String inputStartDate, String inputEndDate, String inputUsername) throws ParseException {
         Date startDate = getDateFromString(inputStartDate);
         Date endDate = getDateFromString(inputEndDate);
-        if (startDate != null && endDate != null) {
-            if (userRepository.existsByUsername(inputUsername)) {
+        if (startDate != null && endDate != null &&
+                userRepository.existsByUsername(inputUsername)) {
                 UserEntity user = userRepository.findByUsername(inputUsername);
                 loanRepository.save(new LoanEntity(null, inputCar, startDate, endDate, user));
                 return true;
-            }
         }
         return false;
     }

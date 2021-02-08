@@ -1,7 +1,7 @@
 package com.project.service.brandservice;
+
 import com.project.model.Brand;
 import com.project.entity.BrandEntity;
-import com.project.exception.ServiceOperationException;
 import com.project.repository.BrandRepository;
 import com.project.repository.CarRepository;
 import com.project.utils.BrandMapper;
@@ -22,6 +22,7 @@ public class BrandServiceImpl implements BrandInterface {
     private final Logger logger = LoggerFactory.getLogger(BrandServiceImpl.class);
     private final BrandRepository brandRepository;
     private final CarRepository carRepository;
+
     public BrandServiceImpl(BrandRepository brandRepository, CarRepository carRepository) {
         this.brandRepository = brandRepository;
         this.carRepository = carRepository;
@@ -38,23 +39,22 @@ public class BrandServiceImpl implements BrandInterface {
         return ResponseEntity.ok(brandsDTA);
     }
 
-    public ResponseEntity<?> addBrand(Brand inputBrand) {
+    public ResponseEntity<Brand> addBrand(Brand inputBrand) {
         BrandEntity brandForSave = BrandMapper.mapperFromBrandDTAToBrandEntity(inputBrand);
-        brandRepository.save(brandForSave);
-        return ResponseEntity.ok().build();
+        Brand responseObject = BrandMapper.mapperFromBrandEntityToBrandDTA(brandRepository.save(brandForSave));
+        return ResponseEntity.ok(responseObject);
     }
 
-    public ResponseEntity<?> modifyBrand(Brand inputBrand) {
+    public ResponseEntity<Brand> modifyBrand(Brand inputBrand) {
         if (brandRepository.existsById(Long.parseLong(inputBrand.getId()))) {
             Optional<BrandEntity> brandForSave = brandRepository.findById(Long.parseLong(inputBrand.getId()));
-            if (brandForSave.isPresent()) {
-                if (inputBrand.getBrand() != null && !inputBrand.getBrand().equals("")) {
-                    if (!inputBrand.getBrand().equals(brandForSave.get().getBrand())) {
-                        brandForSave.get().setBrand(inputBrand.getBrand());
-                        brandRepository.save(brandForSave.get());
-                        return ResponseEntity.ok().build();
-                    }
-                }
+            if (brandForSave.isPresent() && inputBrand.getBrand() != null &&
+                    !inputBrand.getBrand().equals("") &&
+                    !inputBrand.getBrand().equals(brandForSave.get().getBrand())) {
+                brandForSave.get().setBrand(inputBrand.getBrand());
+                Brand returnObject = BrandMapper.mapperFromBrandEntityToBrandDTA(
+                        brandRepository.save(brandForSave.get()));
+                return ResponseEntity.ok(returnObject);
             }
         }
         logger.error("Attempt to modify the brand using a non-existent id");
@@ -71,16 +71,15 @@ public class BrandServiceImpl implements BrandInterface {
         return ResponseEntity.badRequest().build();
     }
 
-    public ResponseEntity<HttpStatus> deleteByID(String id) throws ServiceOperationException {
+    public ResponseEntity<HttpStatus> deleteByID(String id) {
         if (brandRepository.existsById(Long.parseLong(id))) {
             Optional<BrandEntity> brandObject = brandRepository.findById(Long.parseLong(id));
             if (brandObject.isPresent()) {
-                if(checkConstraintsOfIntegrityForBrand(Long.parseLong(id))) {
+                if (checkConstraintsOfIntegrityForBrand(Long.parseLong(id))) {
                     brandRepository.delete(brandObject.get());
                     return ResponseEntity.ok().build();
-                }else{
+                } else {
                     logger.error("Attempt remove brand with assigned binding.");
-
                     throw new ResponseStatusException(HttpStatus.CONFLICT,
                             "Attempt remove brand with assigned binding.");
                 }

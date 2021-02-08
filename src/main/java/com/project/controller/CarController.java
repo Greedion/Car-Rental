@@ -10,15 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -28,6 +25,12 @@ public class CarController {
     private final Logger logger = LoggerFactory.getLogger(CarController.class);
     private final CarServiceImpl carService;
     private final CarRepository carRepository;
+
+    private static final String ID_COULD_NOT_BE_NULL = "Id could not be null";
+    private static final String EXPECTED_DATA_NOT_FOUND = "Attempt to remove car by id that does not exist in database.";
+    private static final String NOT_FOUND_EXCEPTION = "Attempt to get car by id that does not exist in database.";
+    private static final String PARSE_EXCEPTION = "Attempt parse String to Long.";
+
 
     public CarController(CarServiceImpl carService, CarRepository carRepository) {
         this.carService = carService;
@@ -43,58 +46,33 @@ public class CarController {
     @ApiOperation(value = "Get a single car by id.")
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<Car> getOneByID(@PathVariable String id) {
-        if(id == null)
-        {
-            logger.error("Attempt get car with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt get car with empty input data.");
-        }
         try {
-            if (carRepository.existsById(Long.parseLong(id))) {
+            if (id == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ID_COULD_NOT_BE_NULL);
+            } else if (carRepository.existsById(Long.parseLong(id))) {
                 return carService.getOneByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Expected data not found.");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND_EXCEPTION);
             }
         } catch (NumberFormatException e) {
-            logger.error("Attempt parse String to Long");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt parse String to Long.");
+            logger.error(PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PARSE_EXCEPTION);
         }
     }
 
     @ApiOperation(value = "Add car.", notes = "Needed authorization from Admin account")
     @PostMapping(produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addCar(@Valid @RequestBody Car inputCar, BindingResult result) throws ServiceOperationException {
-        if (inputCar == null) {
-            logger.error("Attempt adding car with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt adding car with empty input data.");
-        } else if (inputCar.getBrand() == null || inputCar.getDescription() == null || inputCar.getPricePerHour() == null) {
-            logger.error("Attempt adding car with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt adding car with empty input data.");
-        } else if (result.hasErrors()) {
-            logger.error("Attempt to add Car with wrong data structure.");
-            return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
-        } else
-            return carService.addCar(inputCar);
+    public ResponseEntity<Car> addCar(@Valid @RequestBody Car inputCar) {
+        return carService.addCar(inputCar);
     }
 
     @ApiOperation(value = "Update car.", notes = "Needed authorization from Admin account")
-    @PutMapping(produces = "application/json", consumes = "application/json")
+    @PutMapping(value = "/{inputId}", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateCar(@Valid @RequestBody Car inputCar, BindingResult result) throws ServiceOperationException {
-        if (inputCar == null) {
-            logger.error("Attempt update car with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update car with empty input data.");
-        } else if (inputCar.getBrand() == null ||
-                inputCar.getDescription() == null ||
-                inputCar.getPricePerHour() == null ||
-                inputCar.getId() == null) {
-            logger.error("Attempt update car with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update car with empty input data.");
-        } else if (result.hasErrors()) {
-            logger.error("Attempt to update Car with wrong data structure.");
-            return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
-        } else
-            return carService.modifyCar(inputCar);
+    public ResponseEntity<Car> updateCar(@Valid @RequestBody Car inputCar, @PathVariable String inputId) {
+        inputCar.setId(Optional.ofNullable(inputId).orElse("0"));
+        return carService.updateCar(inputCar);
     }
 
     @ApiOperation(value = "Delete car.", notes = "Needed authorization from Admin account")
@@ -102,23 +80,16 @@ public class CarController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<HttpStatus> deleteByID(@PathVariable String id) {
         try {
-            if (carRepository.existsById(Long.parseLong(id))) {
+            if (id == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ID_COULD_NOT_BE_NULL);
+            } else if (carRepository.existsById(Long.parseLong(id))) {
                 return carService.deleteByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Expected data not found.");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, EXPECTED_DATA_NOT_FOUND);
             }
-        } catch (NumberFormatException e) {
-            logger.error("Attempt parse String to Long");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt parse String to Long.");
+        } catch (NumberFormatException | ServiceOperationException e) {
+            logger.error(PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PARSE_EXCEPTION);
         }
-    }
-
-    private Map<String, String> hadErrors(BindingResult result) {
-        Map<String, String> errorMap = new HashMap<>();
-        for (FieldError error : result.getFieldErrors()
-        ) {
-            errorMap.put(error.getField(), error.getDefaultMessage());
-        }
-        return errorMap;
     }
 }

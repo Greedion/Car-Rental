@@ -27,8 +27,10 @@ public class UserServiceImpl implements UserInterface {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private final static String FORMAT_EXCEPTION = "Money parse format exception";
-    private final static String DEFAULT_USER_ROLE = "ROLE_USER";
+    private static final String FORMAT_EXCEPTION = "Money parse format exception";
+    private static final String DEFAULT_USER_ROLE = "ROLE_USER";
+    private static final String ACCOUNT_NOT_EXISTS_EXCEPTION = "Account with this username doesn't exist";
+    private static final String WRONG_ACCOUNT_ROLE_STATUS = "Received wrong DEFAULT_USER_ROLE or account with this username doesn't exist";
 
     public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -36,7 +38,7 @@ public class UserServiceImpl implements UserInterface {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<?> topUpAccount(String inputUsername, String inputMoneyValue) throws ServiceOperationException {
+    public ResponseEntity<?> topUpAccount(String inputUsername, String inputMoneyValue){
         if (userRepository.existsByUsername(inputUsername)) {
             UserEntity account = userRepository.findByUsername(inputUsername);
             try {
@@ -47,7 +49,7 @@ public class UserServiceImpl implements UserInterface {
             userRepository.save(account);
             return ResponseEntity.ok().build();
         } else {
-            logger.error("Account with this username doesn't exist");
+            logger.error(ACCOUNT_NOT_EXISTS_EXCEPTION);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -68,7 +70,7 @@ public class UserServiceImpl implements UserInterface {
             userRepository.save(user);
             return ResponseEntity.ok().build();
         } else{
-            logger.error("Received wrong DEFAULT_USER_ROLE or account with this username doesn't exist");
+            logger.error(WRONG_ACCOUNT_ROLE_STATUS);
             return ResponseEntity.badRequest().build();}
     }
 }

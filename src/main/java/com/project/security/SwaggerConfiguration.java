@@ -40,9 +40,8 @@ public class SwaggerConfiguration {
 
 
     private ApiKey apiKey() {
-        return new ApiKey("JWT (Don't forgot use prefix 'Bearer ') ", "Authorization", "header");
+        return new ApiKey("JWT", "Authorization", "header");
     }
-
     private SecurityContext securityContext() {
         return SecurityContext.builder().securityReferences(defaultAuth()).build();
     }

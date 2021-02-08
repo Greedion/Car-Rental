@@ -11,11 +11,11 @@ public interface BrandInterface {
 
     ResponseEntity<List<Brand>> getAllBrands();
 
-    ResponseEntity<?> addBrand(Brand inputBrand);
+    ResponseEntity<Brand> addBrand(Brand inputBrand);
 
-    ResponseEntity<?> modifyBrand(Brand inputBrand);
+    ResponseEntity<Brand> modifyBrand(Brand inputBrand);
 
     ResponseEntity<Brand> getOneByID(String id);
 
-    ResponseEntity<HttpStatus> deleteByID(String id) throws ServiceOperationException;
+    ResponseEntity<HttpStatus> deleteByID(String id);
 }
