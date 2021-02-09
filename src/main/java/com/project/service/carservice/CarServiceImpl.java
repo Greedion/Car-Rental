@@ -1,5 +1,6 @@
 package com.project.service.carservice;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.Car;
 import com.project.entity.BrandEntity;
 import com.project.entity.CarEntity;
@@ -22,8 +23,6 @@ import java.util.Optional;
 public class CarServiceImpl implements CarInterface {
 
     private final Logger logger = LoggerFactory.getLogger(CarServiceImpl.class);
-    private static final String EXCEPTION_ALERT = "Wrong input data format Exception";
-
     private final CarRepository carRepository;
     private final BrandRepository brandRepository;
     private final CarMapper carMapper;
@@ -45,53 +44,52 @@ public class CarServiceImpl implements CarInterface {
         return ResponseEntity.ok(carsDTA);
     }
 
-    public ResponseEntity<?> addCar(Car inputCar) throws ServiceOperationException {
+    public ResponseEntity<Car> addCar(Car inputCar) {
         try {
             CarEntity carEntity = carMapper.mapperFromCarDTOToCarEntity(inputCar);
-
-        if (carEntity != null) {
-            carRepository.save(carEntity);
-            return ResponseEntity.ok().build();
-        } else return ResponseEntity.badRequest().build();
-        }catch (ServletException e){
+            if (carEntity != null) {
+                Car returnObject = carMapper.mapperFroMCarEntityToCarDTO(carRepository.save(carEntity));
+                return ResponseEntity.ok(returnObject);
+            } else return ResponseEntity.badRequest().build();
+        } catch (ServletException e) {
             logger.error("Attempt mapping object CarEntity to CarDTO.");
             throw new ServiceOperationException("Mapping from CarDTO to CarEntity Exception");
         }
     }
 
-    public ResponseEntity<?> modifyCar(Car inputCar) throws ServiceOperationException {
-            if (carRepository.existsById(Long.parseLong(inputCar.getId()))) {
-                Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(inputCar.getId()));
-                if (carEntity.isPresent()) {
-                    try {
-                        if (Long.parseLong(inputCar.getBrand()) != carEntity.get().getBrand().getId()) {
-                            Optional<BrandEntity> newBrand = brandRepository.findById(Long.parseLong(inputCar.getBrand()));
-                            newBrand.ifPresent(brandEntity -> carEntity.get().setBrand(brandEntity));
-                            if (!newBrand.isPresent())
-                                return ResponseEntity.badRequest().build();
-                        }
-                        if (inputCar.getDescription() != null && !inputCar.getDescription().equals("")) {
-                            if (!carEntity.get().getDescription().equals(inputCar.getDescription()))
-                                carEntity.get().setDescription(inputCar.getDescription());
-                        }
-                        if (inputCar.getPricePerHour() != null && !inputCar.getPricePerHour().equals("")) {
-                            if (!carEntity.get().getPricePerHour().equals(Double.parseDouble(inputCar.getPricePerHour())))
-                                carEntity.get().setPricePerHour(Double.parseDouble(inputCar.getPricePerHour()));
-                        }
-                    } catch (NumberFormatException e) {
-                        logger.error("Attempt parse id / brand from String to Long.");
-                        throw new ServiceOperationException(EXCEPTION_ALERT);
-                    }
-                    carRepository.save(carEntity.get());
-                    return ResponseEntity.ok().build();
-                } else {
-                    logger.error("Attempt to use an empty CarEntity");
-                    return ResponseEntity.badRequest().build();
-                }
-            } else {
-                logger.error("Attempt to modify car using a non-existent id");
+    public ResponseEntity<Car> updateCar(Car inputCar) {
+        if (!carRepository.existsById(Long.parseLong(inputCar.getId()))) {
+            logger.error("Attempt to modify car using a non-existent id");
+            return ResponseEntity.badRequest().build();
+        } else {
+            Optional<CarEntity> carEntity = carRepository.findById(Long.parseLong(inputCar.getId()));
+            if (!carEntity.isPresent()) {
+                logger.error("Attempt to use an empty CarEntity");
                 return ResponseEntity.badRequest().build();
+            } else {
+                try {
+                    if (Long.parseLong(inputCar.getBrand()) != carEntity.get().getBrand().getId()) {
+                        Optional<BrandEntity> newBrand = brandRepository.findById(Long.parseLong(inputCar.getBrand()));
+                        newBrand.ifPresent(brandEntity -> carEntity.get().setBrand(brandEntity));
+                        if (!newBrand.isPresent())
+                            return ResponseEntity.badRequest().build();
+                    }
+                    if (inputCar.getDescription() != null && !inputCar.getDescription().equals("") &&
+                            !carEntity.get().getDescription().equals(inputCar.getDescription())) {
+                        carEntity.get().setDescription(inputCar.getDescription());
+                    }
+                    if (inputCar.getPricePerHour() != null && !inputCar.getPricePerHour().equals("") &&
+                            !carEntity.get().getPricePerHour().equals(Double.parseDouble(inputCar.getPricePerHour()))) {
+                        carEntity.get().setPricePerHour(Double.parseDouble(inputCar.getPricePerHour()));
+                    }
+                } catch (NumberFormatException e) {
+                    logger.error("Attempt parse id / brand from String to Long.");
+                    throw new ServiceOperationException(ExceptionsMessageArchive.CAR_S_EXCEPTION_ALERT);
+                }
+                Car returnObject = carMapper.mapperFroMCarEntityToCarDTO(carRepository.save(carEntity.get()));
+                return ResponseEntity.ok(returnObject);
             }
+        }
     }
 
     public ResponseEntity<Car> getOneByID(String id) {
@@ -116,5 +114,4 @@ public class CarServiceImpl implements CarInterface {
         logger.error("Attempt to delete car using a non-existent id");
         return ResponseEntity.badRequest().build();
     }
-
 }

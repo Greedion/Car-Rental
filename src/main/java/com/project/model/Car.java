@@ -12,19 +12,19 @@ import java.io.Serializable;
 @Data
 public class Car implements Serializable {
 
-    @Pattern(regexp = "^[0-9]*$", message = "Accept only digits")
+    @Pattern(regexp = "^[0-9]*$", message = "{Car.id.digit}")
     private String id;
 
-    @NotNull(message = "Brand can't be null")
-    @NotEmpty(message = "Brand can't be empty")
+    @NotNull(message = "{Car.brand.notNull}")
+    @NotEmpty(message = "{Car.brand.notEmpty}")
     private String brand;
 
-    @NotNull(message = "Description can't be null")
-    @NotEmpty(message = "Description can't be empty")
+    @NotNull(message = "{Car.description.notNull}")
+    @NotEmpty(message = "{Car.description.notEmpty}")
     private String description;
 
-    @NotNull(message = "PricePerHour can't be null")
-    @NotEmpty(message = "PricePerHour can't be empty")
-    @Pattern(regexp = "^\\d+(\\.\\d+)?$", message = "Accepts only integers or floating point numbers")
+    @NotNull(message = "{Car.pricePerHour.notNull}")
+    @NotEmpty(message = "{Car.pricePerHour.notEmpty}")
+    @Pattern(regexp = "^\\d+(\\.\\d+)?$", message = "{Car.pricePerHour.pattern}")
     private String pricePerHour;
 }

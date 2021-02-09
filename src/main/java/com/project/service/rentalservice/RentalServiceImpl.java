@@ -3,6 +3,7 @@ package com.project.service.rentalservice;
 import com.project.entity.CarEntity;
 import com.project.entity.LoanEntity;
 import com.project.entity.UserEntity;
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.exception.ServiceOperationException;
 import com.project.model.Loan;
 import com.project.repository.CarRepository;
@@ -10,6 +11,7 @@ import com.project.repository.LoanRepository;
 import com.project.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -29,17 +31,13 @@ public class RentalServiceImpl implements RentalInterface {
     private final LoanRepository loanRepository;
     private final CarRepository carRepository;
 
-    private static final String DATE_FORMAT_EXCEPTION = "Input Data is empty";
-    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private static final String PARSE_EXCEPTION = "PARSE FROM METHOD HowManyHours Exception";
-
     public RentalServiceImpl(UserRepository userRepository, LoanRepository loanRepository, CarRepository carRepository) {
         this.userRepository = userRepository;
         this.loanRepository = loanRepository;
         this.carRepository = carRepository;
     }
 
-    public ResponseEntity<?> rentalAttempt(Loan inputLoan, String username) throws ServiceOperationException {
+    public ResponseEntity<HttpStatus> rentalAttempt(Loan inputLoan, String username) {
         try {
             BigDecimal money = getMoney(username);
             Double carPrice = getCarPricePerHour(inputLoan.getCarID());
@@ -56,7 +54,7 @@ public class RentalServiceImpl implements RentalInterface {
                             subtractMoney(user, price);
                             return ResponseEntity.ok().build();
                         } else {
-                            logger.error("Failed to create an account");
+                            logger.error(ExceptionsMessageArchive.RENTAL_S_FAILED_CREATE_ACCOUNT_EXCEPTION);
                             return ResponseEntity.badRequest().build();
                         }
                     }
@@ -64,22 +62,20 @@ public class RentalServiceImpl implements RentalInterface {
                     ResponseEntity.badRequest().build();
                 }
             }
-            logger.error("Attempt used empty value for money or carPrice.");
+            logger.error(ExceptionsMessageArchive.RENTAL_S_EMPTY_VALUE_FOR_MONEY_EXCEPTION);
             return ResponseEntity.badRequest().build();
 
         } catch (ParseException e) {
-            logger.error("Attempt to parse String to BigDecimal.");
-            throw new ServiceOperationException(PARSE_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.RENTAL_S_PARSE_TO_BIG_DECIMAL_EXCEPTION);
+            throw new ServiceOperationException(ExceptionsMessageArchive.RENTAL_S_PARSE_EXCEPTION);
         }
     }
 
-
     private BigDecimal getMoney(String username) {
         if (userRepository.existsByUsername(username)) {
-            UserEntity user = userRepository.findByUsername(username);
-            return user.getMoneyOnTheAccount();
+            return userRepository.findByUsername(username).getMoneyOnTheAccount();
         } else {
-            logger.error("Attempt get money value from non-existent username.");
+            logger.error(ExceptionsMessageArchive.RENTAL_S_GET_MONEY_FROM_NON_EXISTS_USERNAME);
             return null;
         }
     }
@@ -95,8 +91,8 @@ public class RentalServiceImpl implements RentalInterface {
             if (diffSeconds == 0 && diffMinutes == 0) return diffHours;
             else return diffHours + 1;
         } else {
-            logger.error("Attempt parse String to Date format.");
-            throw new NumberFormatException(DATE_FORMAT_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.RENTAL_S_PARSE_STRING_TO_DATE_EXCEPTION);
+            throw new NumberFormatException(ExceptionsMessageArchive.RENTAL_S_DATE_FORMAT_EXCEPTION);
         }
     }
 
@@ -107,12 +103,12 @@ public class RentalServiceImpl implements RentalInterface {
                 return car.get().getPricePerHour();
             }
         }
-        logger.error("Attempt get carPricePerHour value from non-existent carID.");
+        logger.error(ExceptionsMessageArchive.RENTAL_S_GET_CAR_PRICE_PER_HOUR_FROM_NON_EXISTS_CAR);
         return null;
     }
 
     private Date getDateFromString(String date) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        SimpleDateFormat format = new SimpleDateFormat(ExceptionsMessageArchive.RENTAL_S_DATE_PATTERN);
         Date formattedDate;
         formattedDate = format.parse(date);
         return formattedDate;
@@ -142,12 +138,11 @@ public class RentalServiceImpl implements RentalInterface {
     private boolean createReservation(CarEntity inputCar, String inputStartDate, String inputEndDate, String inputUsername) throws ParseException {
         Date startDate = getDateFromString(inputStartDate);
         Date endDate = getDateFromString(inputEndDate);
-        if (startDate != null && endDate != null) {
-            if (userRepository.existsByUsername(inputUsername)) {
-                UserEntity user = userRepository.findByUsername(inputUsername);
-                loanRepository.save(new LoanEntity(null, inputCar, startDate, endDate, user));
-                return true;
-            }
+        if (startDate != null && endDate != null &&
+                userRepository.existsByUsername(inputUsername)) {
+            UserEntity user = userRepository.findByUsername(inputUsername);
+            loanRepository.save(new LoanEntity(null, inputCar, startDate, endDate, user));
+            return true;
         }
         return false;
     }
@@ -160,5 +155,4 @@ public class RentalServiceImpl implements RentalInterface {
         user.setMoneyOnTheAccount(newValue);
         userRepository.save(user);
     }
-
 }

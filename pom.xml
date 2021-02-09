@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.project</groupId>
-    <artifactId>demo</artifactId>
+    <artifactId>portfolio</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Car Rental</name>
     <description>Car rental app</description>
@@ -80,6 +80,11 @@
             <version>${swagger2.version}</version>
         </dependency>
         <!-- other -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>

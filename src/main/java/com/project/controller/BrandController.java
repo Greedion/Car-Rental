@@ -1,7 +1,9 @@
 package com.project.controller;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.Brand;
 import com.project.exception.ServiceOperationException;
+import com.project.model.BrandName;
 import com.project.repository.BrandRepository;
 import com.project.service.brandservice.BrandServiceImpl;
 import io.swagger.annotations.ApiOperation;
@@ -10,15 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -33,7 +32,6 @@ public class BrandController {
                            BrandRepository brandRepository) {
         this.brandService = brandService;
         this.brandRepository = brandRepository;
-
     }
 
     @PreAuthorize("permitAll()")
@@ -45,80 +43,51 @@ public class BrandController {
 
     @ApiOperation(value = "Get a single brand by id.")
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<Brand> getOneByID(@PathVariable String id) throws ResponseStatusException {
-        if (id == null) {
-            logger.error("Attempt get brand with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt get brand with empty input data.");
-        }
+    public ResponseEntity<Brand> getOneByID(@PathVariable(name = "id") String id) {
         try {
-            if (brandRepository.existsById(Long.parseLong(id))) {
+            if (id == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_ID_COULD_NOT_BE_NULL);
+            } else if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.getOneByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Expected data not found.");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ExceptionsMessageArchive.BRAND_C_NOT_FOUND_EXCEPTION);
             }
         } catch (NumberFormatException e) {
-            logger.error("Attempt parse String to Long");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt parse String to Long.");
+            logger.error(ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
         }
     }
 
     @ApiOperation(value = "Add brand.", notes = "Needed authorization from Admin account")
-    @PostMapping(produces = "application/json", consumes = "application/json")
+    @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addBrand(@Valid @RequestBody Brand inputBrand, BindingResult result) {
-        if (inputBrand == null) {
-            logger.error("Attempt create brand with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create brand with empty input data.");
-        } else if (inputBrand.getBrand() == null || inputBrand.getId() == null) {
-            logger.error("Attempt update brand with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt create brand with empty input data.");
-        } else if (result.hasErrors()) {
-            logger.error("Attempt to create Brand with wrong data structure.");
-            return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
-        }
-        return brandService.addBrand(inputBrand);
+    public ResponseEntity<Brand> addBrand(@Valid @RequestBody BrandName brand) {
+        return brandService.addBrand(new Brand("0", brand.getBrand()));
     }
 
     @ApiOperation(value = "Update brand.", notes = "Needed authorization from Admin account")
-    @PutMapping(produces = "application/json", consumes = "application/json")
+    @PutMapping(value = "/{inputId}", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateBrand(@Valid @RequestBody Brand inputBrand, BindingResult result) {
-        if (inputBrand == null) {
-            logger.error("Attempt update brand with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update brand with empty input data.");
-        } else if (inputBrand.getBrand() == null || inputBrand.getId() == null) {
-            logger.error("Attempt update brand with empty input data.");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt update brand with empty input data.");
-        } else if (result.hasErrors()) {
-            logger.error("Attempt to update Brand with wrong data structure.");
-            return new ResponseEntity<>(hadErrors(result), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Brand> updateBrand(@Valid @RequestBody Brand inputBrand, @PathVariable String inputId) {
+        inputBrand.setId(Optional.ofNullable(inputId).orElse("0"));
         return brandService.modifyBrand(inputBrand);
     }
 
     @ApiOperation(value = "Remove brand.", notes = "Needed authorization from Admin account")
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<HttpStatus> deleteByID(@PathVariable String id){
+    public ResponseEntity<HttpStatus> deleteByID(@PathVariable String id) {
         try {
-            if (brandRepository.existsById(Long.parseLong(id))) {
+            if (id == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_ID_COULD_NOT_BE_NULL);
+            } else if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.deleteByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Expected data not found.");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ExceptionsMessageArchive.BRAND_C_EXPECTED_DATA_NOT_FOUND);
             }
         } catch (NumberFormatException | ServiceOperationException e) {
-            logger.error("Attempt parse String to Long");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Attempt parse String to Long.");
+            logger.error(ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
         }
-    }
-
-
-    private Map<String, String> hadErrors(BindingResult result) {
-        Map<String, String> errorMap = new HashMap<>();
-        for (FieldError error : result.getFieldErrors()
-        ) {
-            errorMap.put(error.getField(), error.getDefaultMessage());
-        }
-        return errorMap;
     }
 }
