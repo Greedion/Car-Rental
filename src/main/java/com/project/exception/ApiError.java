@@ -1,54 +1,19 @@
 package com.project.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.List;
 
+import java.util.List;
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 class ApiError {
 
     private HttpStatus status;
     private String message;
     private List<String> errors;
 
-    public ApiError(HttpStatus status, String message, List<String> errors) {
-        super();
-        this.status = status;
-        this.message = message;
-        this.errors = errors;
-    }
-
-    public ApiError(HttpStatus status, String message, String error) {
-        super();
-        this.status = status;
-        this.message = message;
-        errors = Arrays.asList(error);
-    }
-
-    ApiError() {
-    }
-
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(final HttpStatus status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(final List<String> errors) {
-        this.errors = errors;
-    }
 }

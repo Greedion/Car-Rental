@@ -5,9 +5,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class Money {
-    @NotBlank(message = "Money can't be blank")
-    @NotNull(message = "Money can't be null")
-    @NotEmpty(message = "Money can't be empty")
+    @NotBlank(message = "{Money.money.notEmpty}")
+    @NotNull(message = "{Money.money.notNull}")
+    @NotEmpty(message = "{Money.money.notBlank}")
     private String money;
 
     public String getMoney() {

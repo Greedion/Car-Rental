@@ -6,7 +6,6 @@ import com.project.repository.LoanRepository;
 import com.project.utils.LoanMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package com.project.service.brandservice;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.Brand;
 import com.project.entity.BrandEntity;
 import com.project.repository.BrandRepository;
@@ -57,7 +58,7 @@ public class BrandServiceImpl implements BrandInterface {
                 return ResponseEntity.ok(returnObject);
             }
         }
-        logger.error("Attempt to modify the brand using a non-existent id");
+        logger.error(ExceptionsMessageArchive.BRAND_S_MODIFY_BRAND_NON_EXISTS_ID);
         return ResponseEntity.badRequest().build();
     }
 
@@ -67,7 +68,7 @@ public class BrandServiceImpl implements BrandInterface {
             if (brandObject.isPresent())
                 return ResponseEntity.ok(BrandMapper.mapperFromBrandEntityToBrandDTA(brandObject.get()));
         }
-        logger.error("Attempt to get the brand using a non-existent id");
+        logger.error(ExceptionsMessageArchive.BRAND_S_GET_BRAND_NON_EXISTS_ID);
         return ResponseEntity.badRequest().build();
     }
 
@@ -79,13 +80,13 @@ public class BrandServiceImpl implements BrandInterface {
                     brandRepository.delete(brandObject.get());
                     return ResponseEntity.ok().build();
                 } else {
-                    logger.error("Attempt remove brand with assigned binding.");
+                    logger.error(ExceptionsMessageArchive.BRAND_S_REMOVE_BRAND_WITH_ASSIGNING_BIND);
                     throw new ResponseStatusException(HttpStatus.CONFLICT,
-                            "Attempt remove brand with assigned binding.");
+                            ExceptionsMessageArchive.BRAND_S_REMOVE_BRAND_WITH_ASSIGNING_BIND);
                 }
             }
         }
-        logger.error("Attempt to delete the brand using a non-existent id");
+        logger.error(ExceptionsMessageArchive.BRAND_S_DELETE_BRAND_NON_EXISTS_ID);
         return ResponseEntity.badRequest().build();
     }
 
@@ -96,5 +97,4 @@ public class BrandServiceImpl implements BrandInterface {
         }
         return true;
     }
-
 }

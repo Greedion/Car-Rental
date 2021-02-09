@@ -1,6 +1,7 @@
 package com.project.service.authservice;
 
 import com.project.entity.UserEntity;
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.JwtResponse;
 import com.project.repository.UserRepository;
 import com.project.model.User;
@@ -51,21 +52,21 @@ public class AuthServiceImpl implements AuthInterface {
     @Override
     public ResponseEntity<JwtResponse> start(User user, AuthenticationManager authenticationManager) {
         if (checkAccountExist(user) && checkCredentials(user)) {
-                Authentication authentication = authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                String jwt = jwtUtils.generateJwtToken(authentication);
-                UserEntity userDetails = (UserEntity) authentication.getPrincipal();
-                List<String> roles = userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList());
-                return ResponseEntity.ok(new JwtResponse(jwt,
-                        userDetails.getId(),
-                        userDetails.getUsername(),
-                        roles));
-            }
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+            UserEntity userDetails = (UserEntity) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(new JwtResponse(jwt,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    roles));
+        }
 
-        logger.error("Received incorrect logging data.");
+        logger.error(ExceptionsMessageArchive.AUTH_S_INCORRECT_DATA_EXCEPTION);
         return ResponseEntity.badRequest().build();
     }
 }

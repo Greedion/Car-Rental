@@ -1,5 +1,6 @@
 package com.project.service.carservice;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.Car;
 import com.project.entity.BrandEntity;
 import com.project.entity.CarEntity;
@@ -22,8 +23,6 @@ import java.util.Optional;
 public class CarServiceImpl implements CarInterface {
 
     private final Logger logger = LoggerFactory.getLogger(CarServiceImpl.class);
-    private static final String EXCEPTION_ALERT = "Wrong input data format Exception";
-
     private final CarRepository carRepository;
     private final BrandRepository brandRepository;
     private final CarMapper carMapper;
@@ -85,7 +84,7 @@ public class CarServiceImpl implements CarInterface {
                     }
                 } catch (NumberFormatException e) {
                     logger.error("Attempt parse id / brand from String to Long.");
-                    throw new ServiceOperationException(EXCEPTION_ALERT);
+                    throw new ServiceOperationException(ExceptionsMessageArchive.CAR_S_EXCEPTION_ALERT);
                 }
                 Car returnObject = carMapper.mapperFroMCarEntityToCarDTO(carRepository.save(carEntity.get()));
                 return ResponseEntity.ok(returnObject);
@@ -115,5 +114,4 @@ public class CarServiceImpl implements CarInterface {
         logger.error("Attempt to delete car using a non-existent id");
         return ResponseEntity.badRequest().build();
     }
-
 }

@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.project</groupId>
-    <artifactId>demo</artifactId>
+    <artifactId>portfolio</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Car Rental</name>
     <description>Car rental app</description>

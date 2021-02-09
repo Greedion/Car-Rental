@@ -1,5 +1,6 @@
 package com.project.controller;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.Car;
 import com.project.exception.ServiceOperationException;
 import com.project.repository.CarRepository;
@@ -26,12 +27,6 @@ public class CarController {
     private final CarServiceImpl carService;
     private final CarRepository carRepository;
 
-    private static final String ID_COULD_NOT_BE_NULL = "Id could not be null";
-    private static final String EXPECTED_DATA_NOT_FOUND = "Attempt to remove car by id that does not exist in database.";
-    private static final String NOT_FOUND_EXCEPTION = "Attempt to get car by id that does not exist in database.";
-    private static final String PARSE_EXCEPTION = "Attempt parse String to Long.";
-
-
     public CarController(CarServiceImpl carService, CarRepository carRepository) {
         this.carService = carService;
         this.carRepository = carRepository;
@@ -48,15 +43,15 @@ public class CarController {
     public ResponseEntity<Car> getOneByID(@PathVariable String id) {
         try {
             if (id == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ID_COULD_NOT_BE_NULL);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.CAR_C_ID_COULD_NOT_BE_NULL);
             } else if (carRepository.existsById(Long.parseLong(id))) {
                 return carService.getOneByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND_EXCEPTION);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ExceptionsMessageArchive.CAR_C_NOT_FOUND_EXCEPTION);
             }
         } catch (NumberFormatException e) {
-            logger.error(PARSE_EXCEPTION);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PARSE_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.CAR_C_PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.CAR_C_PARSE_EXCEPTION);
         }
     }
 
@@ -81,15 +76,15 @@ public class CarController {
     public ResponseEntity<HttpStatus> deleteByID(@PathVariable String id) {
         try {
             if (id == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ID_COULD_NOT_BE_NULL);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.CAR_C_ID_COULD_NOT_BE_NULL);
             } else if (carRepository.existsById(Long.parseLong(id))) {
                 return carService.deleteByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, EXPECTED_DATA_NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ExceptionsMessageArchive.CAR_C_EXPECTED_DATA_NOT_FOUND);
             }
         } catch (NumberFormatException | ServiceOperationException e) {
-            logger.error(PARSE_EXCEPTION);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PARSE_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.CAR_C_PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.CAR_C_PARSE_EXCEPTION);
         }
     }
 }

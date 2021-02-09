@@ -1,7 +1,6 @@
 package com.project.service.brandservice;
 
 import com.project.model.Brand;
-import com.project.exception.ServiceOperationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

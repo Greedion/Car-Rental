@@ -13,12 +13,11 @@ import java.io.Serializable;
 @Data
 public class Brand implements Serializable {
 
-    @Pattern(regexp = "^[0-9]*$", message = "Accept only digits")
+    @Pattern(regexp = "^[0-9]*$", message = "{Brand.id.pattern}")
     private String id;
 
-    @NotBlank(message = "Password cannot be blank.")
-    @NotNull(message = "Brand can't be null")
-    @NotEmpty(message = "Brand can't be empty")
+    @NotBlank(message = "{Brand.brand.notBlank}")
+    @NotNull(message = "{Brand.brand.notEmpty}")
+    @NotEmpty(message = "{Brand.brand.notNull}")
     private String brand;
-
 }

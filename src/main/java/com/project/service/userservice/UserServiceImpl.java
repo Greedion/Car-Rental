@@ -1,5 +1,6 @@
 package com.project.service.userservice;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.FullUser;
 import com.project.entity.UserEntity;
 import com.project.entity.UserRoleEntity;
@@ -27,12 +28,8 @@ public class UserServiceImpl implements UserInterface {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private static final String FORMAT_EXCEPTION = "Money parse format exception";
-    private static final String DEFAULT_USER_ROLE = "ROLE_USER";
-    private static final String ACCOUNT_NOT_EXISTS_EXCEPTION = "Account with this username doesn't exist";
-    private static final String WRONG_ACCOUNT_ROLE_STATUS = "Received wrong DEFAULT_USER_ROLE or account with this username doesn't exist";
-
-    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -44,12 +41,12 @@ public class UserServiceImpl implements UserInterface {
             try {
                 account.setMoneyOnTheAccount(account.getMoneyOnTheAccount().add(new BigDecimal(inputMoneyValue)));
             } catch (NumberFormatException e) {
-                throw new ServiceOperationException(FORMAT_EXCEPTION);
+                throw new ServiceOperationException(ExceptionsMessageArchive.USER_S_FORMAT_EXCEPTION);
             }
             userRepository.save(account);
             return ResponseEntity.ok().build();
         } else {
-            logger.error(ACCOUNT_NOT_EXISTS_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.USER_S_ACCOUNT_NOT_EXISTS_EXCEPTION);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -64,13 +61,15 @@ public class UserServiceImpl implements UserInterface {
     }
 
     public ResponseEntity<?> createAccount(User inputUser) {
-        Optional<UserRoleEntity> userRole = Optional.ofNullable(userRoleRepository.findByRole(DEFAULT_USER_ROLE));
+        Optional<UserRoleEntity> userRole = Optional.ofNullable(userRoleRepository
+                .findByRole(ExceptionsMessageArchive.USER_S_DEFAULT_USER_ROLE));
         if (userRole.isPresent() && !userRepository.existsByUsername(inputUser.getUsername())) {
-            UserEntity user = new UserEntity(inputUser.getUsername(), passwordEncoder.encode(inputUser.getPassword()), userRole.get(), BigDecimal.valueOf(0L));
+            UserEntity user = new UserEntity(inputUser.getUsername(), passwordEncoder
+                    .encode(inputUser.getPassword()), userRole.get(), BigDecimal.valueOf(0L));
             userRepository.save(user);
             return ResponseEntity.ok().build();
         } else{
-            logger.error(WRONG_ACCOUNT_ROLE_STATUS);
+            logger.error(ExceptionsMessageArchive.USER_S_WRONG_ACCOUNT_ROLE_STATUS);
             return ResponseEntity.badRequest().build();}
     }
 }

@@ -1,5 +1,6 @@
 package com.project.controller;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.Brand;
 import com.project.exception.ServiceOperationException;
 import com.project.model.BrandName;
@@ -27,16 +28,10 @@ public class BrandController {
     private final BrandServiceImpl brandService;
     private final BrandRepository brandRepository;
 
-    private static final String ID_COULD_NOT_BE_NULL = "Id could not be null";
-    private static final String EXPECTED_DATA_NOT_FOUND = "Attempt to remove brand by id that does not exist in database.";
-    private static final String NOT_FOUND_EXCEPTION = "Attempt to get brand by id that does not exist in database.";
-    private static final String PARSE_EXCEPTION = "Attempt parse String to Long.";
-
     public BrandController(BrandServiceImpl brandService,
                            BrandRepository brandRepository) {
         this.brandService = brandService;
         this.brandRepository = brandRepository;
-
     }
 
     @PreAuthorize("permitAll()")
@@ -51,25 +46,24 @@ public class BrandController {
     public ResponseEntity<Brand> getOneByID(@PathVariable(name = "id") String id) {
         try {
             if (id == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ID_COULD_NOT_BE_NULL);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_ID_COULD_NOT_BE_NULL);
             } else if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.getOneByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, NOT_FOUND_EXCEPTION);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ExceptionsMessageArchive.BRAND_C_NOT_FOUND_EXCEPTION);
             }
         } catch (NumberFormatException e) {
-            logger.error(PARSE_EXCEPTION);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PARSE_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
         }
     }
 
     @ApiOperation(value = "Add brand.", notes = "Needed authorization from Admin account")
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Brand> addBrand(@Valid BrandName brand) {
+    public ResponseEntity<Brand> addBrand(@Valid @RequestBody BrandName brand) {
         return brandService.addBrand(new Brand("0", brand.getBrand()));
     }
-
 
     @ApiOperation(value = "Update brand.", notes = "Needed authorization from Admin account")
     @PutMapping(value = "/{inputId}", produces = "application/json", consumes = "application/json")
@@ -85,16 +79,15 @@ public class BrandController {
     public ResponseEntity<HttpStatus> deleteByID(@PathVariable String id) {
         try {
             if (id == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ID_COULD_NOT_BE_NULL);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_ID_COULD_NOT_BE_NULL);
             } else if (brandRepository.existsById(Long.parseLong(id))) {
                 return brandService.deleteByID(id);
             } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, EXPECTED_DATA_NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ExceptionsMessageArchive.BRAND_C_EXPECTED_DATA_NOT_FOUND);
             }
         } catch (NumberFormatException | ServiceOperationException e) {
-            logger.error(PARSE_EXCEPTION);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PARSE_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ExceptionsMessageArchive.BRAND_C_PARSE_EXCEPTION);
         }
     }
-
 }

@@ -19,7 +19,6 @@ public class AuthController {
     final JwtUtils jwtUtils;
     private final AuthServiceImpl authService;
 
-
     public AuthController(AuthServiceImpl authService,
                           AuthenticationManager authenticationManager,
                           JwtUtils jwtUtils) {

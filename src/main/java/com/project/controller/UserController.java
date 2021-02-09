@@ -1,5 +1,6 @@
 package com.project.controller;
 
+import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.FullUser;
 import com.project.model.Money;
 import com.project.service.userservice.UserServiceImpl;
@@ -23,7 +24,6 @@ public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserServiceImpl userService;
-    private static final String NULL_USERNAME_EXCEPTION = "Attempt to create reservation with outdated login token. Or user doesn't exist.";
 
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
@@ -35,8 +35,8 @@ public class UserController {
     public ResponseEntity<?> moneyTransfer(@Valid @RequestBody Money money, HttpServletRequest httpServletRequest) {
             String username = (String) httpServletRequest.getAttribute("username");
         if (username == null) {
-            logger.error(NULL_USERNAME_EXCEPTION);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, NULL_USERNAME_EXCEPTION);
+            logger.error(ExceptionsMessageArchive.USER_C_NULL_USERNAME_EXCEPTION);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ExceptionsMessageArchive.USER_C_NULL_USERNAME_EXCEPTION);
         }
             return userService.topUpAccount(username, money.getMoney());
     }
