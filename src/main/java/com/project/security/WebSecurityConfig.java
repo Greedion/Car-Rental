@@ -78,10 +78,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
+                    .antMatchers(HttpMethod.POST, "/api/user/createaccount").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/user").hasRole("ADMIN")
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-                .antMatchers(HttpMethod.POST, "api/user/createaccount").permitAll()
+
                 .anyRequest().authenticated().and()
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
             http.csrf().disable();

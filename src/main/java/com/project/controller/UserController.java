@@ -49,6 +49,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "Create account.")
+    @PreAuthorize("hasRole('permitAll()')")
     @PostMapping(value = "/createaccount", produces = "application/json", consumes = "application/json")
     public ResponseEntity<?> createAccount(@Valid @RequestBody User user) {
                 return userService.createAccount(user);
