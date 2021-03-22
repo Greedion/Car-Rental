@@ -1,4 +1,4 @@
-package com.project.service.brandservice.MockRepository;
+package com.project.service.brandservice;
 
 import com.project.entity.BrandEntity;
 import com.project.repository.BrandRepository;

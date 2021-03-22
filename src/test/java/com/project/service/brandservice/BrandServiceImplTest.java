@@ -5,7 +5,7 @@ import com.project.exception.ExceptionsMessageArchive;
 import com.project.model.Brand;
 import com.project.repository.BrandRepository;
 import com.project.repository.CarRepository;
-import com.project.service.brandservice.MockRepository.BrandMockRepository;
+import com.project.utils.BrandMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -59,12 +59,13 @@ class BrandServiceImplTest {
         BrandServiceImpl brandService = new BrandServiceImpl(brandRepositoryMock, carRepositoryMock);
 
         //when
-        ResponseEntity<?> response = brandService.addBrand(inputBrand);
+        ResponseEntity<Brand> response = brandService.addBrand(inputBrand);
 
         //then
         assertThat(response).isNotNull();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(brandRepositoryMock.existsById(1L));
+        assertEquals(brandRepositoryMock.getOne(1L), BrandMapper.mapperFromBrandDTAToBrandEntity(inputBrand));
     }
 
     @Test
