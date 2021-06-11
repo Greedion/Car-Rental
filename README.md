@@ -6,6 +6,7 @@
 ### How To Run
 
 - Clone this repo to your local machine using `https://github.com/Greedion/Car-Rental.git`
+- Run command `mvn package` in project root directory
 - Run command `docker-compose up` in project root directory
 - [Go to Swagger UI](http://localhost:8080/swagger-ui.html)
 
